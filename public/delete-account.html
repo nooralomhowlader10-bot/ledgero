@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delete Account | Ledgero</title>
+    <style>
+        body { font-family: system-ui, -apple-system, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; line-height: 1.6; color: #333; }
+        h1 { color: #1a73e8; }
+        .card { background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #dee2e6; }
+        hr { border: 0; border-top: 1px solid #eee; margin: 30px 0; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>Account & Data Deletion</h1>
+        <p>Ledgero gives you full control over your data. In compliance with Google Play Store 2024-2026 data deletion policies, you can delete your account and all associated data at any time.</p>
+        
+        <h3>How to delete in-app:</h3>
+        <ol>
+            <li>Open the Ledgero app.</li>
+            <li>Navigate to <strong>Settings</strong>.</li>
+            <li>Tap on <strong>Delete Account</strong>.</li>
+            <li>Confirm your choice. Your data will be wiped immediately.</li>
+        </ol>
+
+        <h3>Web-based deletion request:</h3>
+        <p>If you no longer have access to the app, you can request full data and account deletion by emailing our support team.</p>
+        <p>Email: <a href="mailto:support@an3ai.com">support@an3ai.com</a></p>
+
+        <h3>What Data is Deleted vs. Retained (Audit Trail Policy):</h3>
+        <ul>
+            <li><strong>Deleted Immediately In-App:</strong> All active operational records across all businesses — daily ledgers (<code>days</code>), customer/supplier due books (<code>contacts</code>, <code>contactTxs</code>), online orders (<code>onlineOrders</code>), business metadata (<code>meta</code>), user preferences (<code>settings</code>, <code>sheetsConfig</code>, <code>businessList</code>), public storefronts (<code>stores</code>, <code>products</code>, <code>orders</code>), and all local device storage (<code>localStorage</code>).</li>
+            <li><strong>Tamper-Resistant Audit History (<code>auditLog</code>):</strong> To protect financial accounting integrity against unauthorized manipulation, client-side modification or deletion of <code>auditLog</code> entries is strictly blocked by Firestore Security Rules (<code>allow update, delete: if false;</code>). If you require complete server-side erasure of historical audit logs after account deletion, email <a href="mailto:support@an3ai.com">support@an3ai.com</a> and our team will purge the remaining <code>auditLog</code> collection via our administrative backend within 7 business days.</li>
+            <li><strong>Backup Contents:</strong> Encrypted JSON backups exported by the shop owner include <code>days</code>, <code>contacts</code>, <code>contactTxs</code>, <code>onlineOrders</code>, <code>auditLog</code>, <code>meta</code>, <code>settings</code>, <code>sheetsConfig</code>, and <code>stores</code> (excluding Firebase Auth credentials and OAuth tokens).</li>
+        </ul>
+    </div>
+
+    <div class="card">
+        <h1>অ্যাকাউন্ট ও ডেটা মুছে ফেলার নিয়ম</h1>
+        <p>লেজারো আপনাকে আপনার ডেটার উপর পূর্ণ নিয়ন্ত্রণ দেয়। গুগল প্লে স্টোরের ডেটা ডিলিশন পলিসি অনুযায়ী, আপনি যে কোনো সময় আপনার অ্যাকাউন্ট এবং সমস্ত ডেটা মুছে ফেলতে পারবেন।</p>
+        
+        <h3>অ্যাপ থেকে কীভাবে মুছবেন:</h3>
+        <ol>
+            <li>লেজারো অ্যাপটি খুলুন।</li>
+            <li><strong>সেটিংস (Settings)</strong>-এ যান।</li>
+            <li><strong>অ্যাকাউন্ট মুছুন (Delete Account)</strong>-এ ট্যাপ করুন।</li>
+            <li>নিশ্চিত করুন। আপনার ডেটা তাৎক্ষণিকভাবে মুছে ফেলা হবে।</li>
+        </ol>
+
+        <h3>ওয়েব-ভিত্তিক অনুরোধ:</h3>
+        <p>আপনার যদি অ্যাপটিতে আর অ্যাক্সেস না থাকে, তবে আপনি আমাদের সাপোর্ট টিমে ইমেল করে ডেটা ও অ্যাকাউন্ট মুছে ফেলার অনুরোধ করতে পারেন।</p>
+        <p>ইমেল: <a href="mailto:support@an3ai.com">support@an3ai.com</a></p>
+
+        <h3>কোন ডেটা মুছে যায় এবং কোনটি সংরক্ষিত থাকে (অডিট লগ নীতিমালা):</h3>
+        <ul>
+            <li><strong>তাৎক্ষণিকভাবে মুছে যাওয়া ডেটা:</strong> আপনার সকল ব্যবসার দৈনিক খাতা (<code>days</code>), বাকি ও কন্টাক্ট তালিকা (<code>contacts</code>, <code>contactTxs</code>), অনলাইন অর্ডার (<code>onlineOrders</code>), মেটাডেটা (<code>meta</code>), সেটিংস (<code>settings</code>, <code>sheetsConfig</code>, <code>businessList</code>), পাবলিক স্টোরফ্রন্ট (<code>stores</code>, <code>products</code>, <code>orders</code>) এবং ডিভাইসের লোকাল স্টোরেজ (<code>localStorage</code>) সাথে সাথেই মুছে ফেলা হয়।</li>
+            <li><strong>অপরিবর্তনযোগ্য অডিট লগ (<code>auditLog</code>):</strong> হিসাবের কারচুপি রোধ করার জন্য ফায়ারস্টোর সিকিউরিটি রুলস দ্বারা ক্লায়েন্ট অ্যাপ থেকে অডিট লগ পরিবর্তন বা মুছে ফেলা সম্পূর্ণরূপে ব্লক করা থাকে (<code>allow update, delete: if false;</code>)। অ্যাকাউন্ট ডিলিট করার পর সার্ভার থেকে অডিট লগও সম্পূর্ণ মুছে ফেলতে চাইলে <a href="mailto:support@an3ai.com">support@an3ai.com</a>-এ ইমেল করুন; আমাদের অ্যাডমিন টিম ৭ কার্যদিবসের মধ্যে তা সার্ভার থেকে চিরতরে মুছে ফেলবে।</li>
+            <li><strong>ব্যাকআপে অন্তর্ভুক্ত ডেটা:</strong> আপনার ডাউনলোড করা বা ক্লাউড ব্যাকআপে <code>days</code>, <code>contacts</code>, <code>contactTxs</code>, <code>onlineOrders</code>, <code>auditLog</code>, <code>meta</code>, <code>settings</code>, <code>sheetsConfig</code> এবং <code>stores</code> অন্তর্ভুক্ত থাকে (লগইন পাসওয়ার্ড বা ওঅথ টোকেন ব্যাকআপে থাকে না)।</li>
+        </ul>
+    </div>
+</body>
+</html>

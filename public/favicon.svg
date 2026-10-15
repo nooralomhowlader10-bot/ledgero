@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <linearGradient id="ledgeroGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#34D399" />
+      <stop offset="40%" stop-color="#10B981" />
+      <stop offset="100%" stop-color="#059669" />
+    </linearGradient>
+    <filter id="subtleGlow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#059669" flood-opacity="0.25" />
+    </filter>
+  </defs>
+  
+  <!-- App Icon Background -->
+  <rect width="512" height="512" rx="112" fill="#0B0F19" />
+
+  <!-- The 3 Minimalist Ledger Rows forming 'L' -->
+  <g filter="url(#subtleGlow)">
+    <!-- Vertical Column -->
+    <rect x="115" y="100" width="112" height="172" rx="10" fill="url(#ledgeroGrad)" />
+    
+    <!-- Middle Ledger Row -->
+    <rect x="115" y="286" width="232" height="56" rx="10" fill="url(#ledgeroGrad)" />
+    
+    <!-- Bottom Ledger Row -->
+    <rect x="115" y="356" width="288" height="56" rx="10" fill="url(#ledgeroGrad)" />
+  </g>
+</svg>

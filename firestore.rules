@@ -1,0 +1,490 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function isValidString(val, minLen, maxLen) {
+      return val is string && val.size() >= minLen && val.size() <= maxLen;
+    }
+
+    function isValidNumber(val, minVal, maxVal) {
+      return val is number && val >= minVal && val <= maxVal;
+    }
+
+    function getMfsProvider(method) {
+      return method == 'bkash_manual' ? 'bkash' : (method == 'nagad_manual' ? 'nagad' : (method == 'rocket_manual' ? 'rocket' : method));
+    }
+
+    function hasDayDocAfter(userId, bizId, dateKey) {
+      return existsAfter(/databases/$(database)/documents/users/$(userId)/businesses/$(bizId)/days/$(dateKey));
+    }
+
+    function getDayDocAfter(userId, bizId, dateKey) {
+      return getAfter(/databases/$(database)/documents/users/$(userId)/businesses/$(bizId)/days/$(dateKey)).data;
+    }
+
+    function hasTrxDocAfter(userId, regId) {
+      return existsAfter(/databases/$(database)/documents/users/$(userId)/trxRegistry/$(regId));
+    }
+
+    function getTrxDocAfter(userId, regId) {
+      return getAfter(/databases/$(database)/documents/users/$(userId)/trxRegistry/$(regId)).data;
+    }
+
+    function getOrderTrxRegId(orderData) {
+      return getMfsProvider(orderData.paymentMethod) + '_' + (('verifiedTrxId' in orderData) ? orderData.verifiedTrxId : orderData.paymentTrxId);
+    }
+
+    function hasValidTrxRegistryClaim(userId, orderId, orderData) {
+      return hasTrxDocAfter(userId, getOrderTrxRegId(orderData))
+        && getTrxDocAfter(userId, getOrderTrxRegId(orderData)).orderId == orderId;
+    }
+
+    function isValidSettlementDayClaim(userId, bizId, orderId, orderData) {
+      return hasDayDocAfter(userId, bizId, orderData.settlementDateKey)
+        && getDayDocAfter(userId, bizId, orderData.settlementDateKey)._lastCloudSavedAt == orderData.settledAt
+        && ('wallets' in getDayDocAfter(userId, bizId, orderData.settlementDateKey))
+        && (orderData.settlementWallet in getDayDocAfter(userId, bizId, orderData.settlementDateKey).wallets)
+        && (
+          (('settledOrderIds' in getDayDocAfter(userId, bizId, orderData.settlementDateKey))
+            && getDayDocAfter(userId, bizId, orderData.settlementDateKey).settledOrderIds.hasAny([orderId]))
+          || (('orderSettlements' in getDayDocAfter(userId, bizId, orderData.settlementDateKey))
+            && (orderId in getDayDocAfter(userId, bizId, orderData.settlementDateKey).orderSettlements))
+        );
+    }
+
+    function isValidPaymentVerificationDayClaim(userId, bizId, orderId, orderData) {
+      return hasDayDocAfter(userId, bizId, orderData.paymentDateKey)
+        && getDayDocAfter(userId, bizId, orderData.paymentDateKey)._lastCloudSavedAt == orderData.paymentVerifiedAt
+        && ('wallets' in getDayDocAfter(userId, bizId, orderData.paymentDateKey))
+        && (orderData.paymentWallet in getDayDocAfter(userId, bizId, orderData.paymentDateKey).wallets)
+        && (
+          (('verifiedOrderIds' in getDayDocAfter(userId, bizId, orderData.paymentDateKey))
+            && getDayDocAfter(userId, bizId, orderData.paymentDateKey).verifiedOrderIds.hasAny([orderId]))
+          || (('orderPaymentVerifications' in getDayDocAfter(userId, bizId, orderData.paymentDateKey))
+            && (orderId in getDayDocAfter(userId, bizId, orderData.paymentDateKey).orderPaymentVerifications))
+        );
+    }
+
+    function isValidStoreData(data) {
+      return data.keys().hasAll(['shopName', 'ownerUserId', 'whatsappNumber'])
+        && data.keys().hasOnly([
+          'shopName', 'displayName', 'ownerUserId', 'bizId',
+          'whatsappNumber', 'bkashNumber', 'nagadNumber', 'rocketNumber',
+          'address', 'isActive', 'autoSync',
+          'movedTo', 'createdAt', 'updatedAt'
+        ])
+        && isValidString(data.shopName, 1, 100)
+        && isValidString(data.whatsappNumber, 6, 20)
+        && (!('bkashNumber' in data) || isValidString(data.bkashNumber, 0, 25))
+        && (!('nagadNumber' in data) || isValidString(data.nagadNumber, 0, 25))
+        && (!('rocketNumber' in data) || isValidString(data.rocketNumber, 0, 25))
+        && (!('displayName' in data) || isValidString(data.displayName, 0, 100))
+        && (!('address' in data) || isValidString(data.address, 0, 250))
+        && (!('bizId' in data) || isValidString(data.bizId, 0, 100))
+        && (!('movedTo' in data) || isValidString(data.movedTo, 0, 50))
+        && (!('isActive' in data) || data.isActive is bool)
+        && (!('autoSync' in data) || data.autoSync is bool)
+        && (!('createdAt' in data) || isValidString(data.createdAt, 0, 40))
+        && (!('updatedAt' in data) || isValidString(data.updatedAt, 0, 40));
+    }
+
+    function isValidPublicStoreInfoData(data) {
+      return data.keys().hasAll(['shopName', 'whatsappNumber', 'isActive'])
+        && data.keys().hasOnly([
+          'shopName', 'displayName', 'whatsappNumber',
+          'bkashNumber', 'nagadNumber', 'rocketNumber',
+          'address', 'isActive', 'createdAt', 'updatedAt'
+        ])
+        && !('ownerUserId' in data)
+        && !('bizId' in data)
+        && !('autoSync' in data)
+        && !('movedTo' in data)
+        && isValidString(data.shopName, 1, 100)
+        && isValidString(data.whatsappNumber, 6, 20)
+        && (!('bkashNumber' in data) || isValidString(data.bkashNumber, 0, 25))
+        && (!('nagadNumber' in data) || isValidString(data.nagadNumber, 0, 25))
+        && (!('rocketNumber' in data) || isValidString(data.rocketNumber, 0, 25))
+        && data.isActive is bool
+        && (!('displayName' in data) || isValidString(data.displayName, 0, 100))
+        && (!('address' in data) || isValidString(data.address, 0, 250))
+        && (!('createdAt' in data) || isValidString(data.createdAt, 0, 40))
+        && (!('updatedAt' in data) || isValidString(data.updatedAt, 0, 40));
+    }
+
+    function isValidPublicProductData(data) {
+      return data.keys().hasAll(['name', 'price', 'inStock'])
+        && data.keys().hasOnly([
+          'name', 'price', 'unit', 'category',
+          'inStock', 'stock', 'addedAt', 'updatedAt'
+        ])
+        && !('buyPrice' in data)
+        && !('profit' in data)
+        && !('cogs' in data)
+        && !('batches' in data)
+        && !('fifoCogs' in data)
+        && isValidString(data.name, 1, 150)
+        && isValidNumber(data.price, 0, 100000000)
+        && data.inStock is bool
+        && (!('stock' in data) || isValidNumber(data.stock, 0, 10000000))
+        && (!('unit' in data) || isValidString(data.unit, 0, 30))
+        && (!('category' in data) || isValidString(data.category, 0, 80))
+        && (!('addedAt' in data) || isValidString(data.addedAt, 0, 40))
+        && (!('updatedAt' in data) || isValidString(data.updatedAt, 0, 40));
+    }
+
+    function isValidSettingsData(data) {
+      return data.keys().hasOnly([
+        'language', 'isDarkMode', 'isPrivacyMode', 'autoCloseTime',
+        'autoOpenTime', 'autoCloseEnabled', 'editLockEnabled', 'editLockPinHash',
+        'userRole', 'staffPinHash', 'appMode', 'featureFlags',
+        'taxRegion', 'sheetsWebAppUrl', 'teaHouseProducts', 'teaHouseMonthlyTab',
+        'teaHouseMonthlyPersonal', 'teaHouseMonthlyShop', 'teaHouseTabMonth', 'courierSettings',
+        'customerBlacklist', 'updatedAt'
+      ])
+      && (!('language' in data) || data.language in ['bn', 'en'])
+      && (!('isDarkMode' in data) || data.isDarkMode is bool)
+      && (!('isPrivacyMode' in data) || data.isPrivacyMode is bool)
+      && (!('appMode' in data) || data.appMode in ['easy', 'advanced'])
+      && (!('autoCloseEnabled' in data) || data.autoCloseEnabled is bool)
+      && (!('editLockEnabled' in data) || data.editLockEnabled is bool);
+    }
+
+    function isValidSheetsConfigData(data) {
+      return data.keys().hasOnly([
+        'spreadsheetId', 'spreadsheetUrl', 'lastSync',
+        'autoExport', 'webAppUrl', 'monthlySpreadsheets', 'updatedAt'
+      ])
+      && (!('spreadsheetId' in data) || isValidString(data.spreadsheetId, 0, 200))
+      && (!('spreadsheetUrl' in data) || isValidString(data.spreadsheetUrl, 0, 1024))
+      && (!('monthlySpreadsheets' in data) || (data.monthlySpreadsheets is map && data.monthlySpreadsheets.keys().size() <= 120));
+    }
+
+    function isValidAuditLogData(data) {
+      return data.keys().hasAll(['action', 'timestamp'])
+        && data.keys().hasOnly([
+          'action', 'txId', 'txType', 'amount', 'txData', 'reversalTxData',
+          'previousData', 'newData', 'reason', 'userId', 'userName',
+          'timestamp', 'dateKey', 'createdAt'
+        ])
+        && isValidString(data.action, 1, 50);
+    }
+
+    function isValidOrderItem(item) {
+      return item is map
+        && item.keys().hasAll(['productName', 'quantity', 'unitPrice', 'subtotal'])
+        && item.keys().hasOnly(['productId', 'productName', 'quantity', 'unitPrice', 'subtotal'])
+        && isValidString(item.productName, 1, 150)
+        && isValidNumber(item.quantity, 1, 10000)
+        && isValidNumber(item.unitPrice, 0, 100000000)
+        && isValidNumber(item.subtotal, 0, 100000000)
+        && item.subtotal == item.quantity * item.unitPrice;
+    }
+
+    function sumOrderItemsSubtotal(items) {
+      return items[0].subtotal
+        + (items.size() > 1 ? items[1].subtotal : 0)
+        + (items.size() > 2 ? items[2].subtotal : 0)
+        + (items.size() > 3 ? items[3].subtotal : 0)
+        + (items.size() > 4 ? items[4].subtotal : 0);
+    }
+
+    function isValidIncomingCustomerOrder(data) {
+      return data.keys().hasAll(['id', 'customerName', 'customerPhone', 'items', 'totalAmount', 'status'])
+        && data.keys().hasOnly([
+          'id', 'customerName', 'customerPhone', 'items', 'totalAmount',
+          'subtotal', 'deliveryCharge', 'isInsideDhaka', 'customerAddress',
+          'paymentMethod', 'paymentStatus', 'paymentTrxId', 'paymentSenderPhone',
+          'notes', 'source', 'status', 'createdAt',
+          'createdAtMs', 'updatedAt'
+        ])
+        && data.status == 'draft'
+        && isValidString(data.id, 1, 100)
+        && isValidString(data.customerName, 1, 150)
+        && isValidString(data.customerPhone, 6, 25)
+        && isValidNumber(data.totalAmount, 0, 100000000)
+        && (!('subtotal' in data) || isValidNumber(data.subtotal, 0, 100000000))
+        && (!('deliveryCharge' in data) || isValidNumber(data.deliveryCharge, 0, 100000))
+        && (!('isInsideDhaka' in data) || data.isInsideDhaka is bool)
+        && (!('customerAddress' in data) || isValidString(data.customerAddress, 0, 250))
+        && (!('paymentMethod' in data) || data.paymentMethod in ['cod', 'bkash_manual', 'nagad_manual', 'rocket_manual'])
+        && (!('paymentStatus' in data) || data.paymentStatus in ['awaiting_payment', 'submitted_for_verification', 'due_on_delivery'])
+        && (!('paymentTrxId' in data) || isValidString(data.paymentTrxId, 0, 60))
+        && (!('paymentSenderPhone' in data) || isValidString(data.paymentSenderPhone, 0, 25))
+        && (!('notes' in data) || isValidString(data.notes, 0, 250))
+        && (!('source' in data) || isValidString(data.source, 0, 50))
+        && data.items is list
+        && data.items.size() >= 1
+        && data.items.size() <= 5
+        && isValidOrderItem(data.items[0])
+        && (data.items.size() < 2 || isValidOrderItem(data.items[1]))
+        && (data.items.size() < 3 || isValidOrderItem(data.items[2]))
+        && (data.items.size() < 4 || isValidOrderItem(data.items[3]))
+        && (data.items.size() < 5 || isValidOrderItem(data.items[4]))
+        && (!('subtotal' in data) || data.subtotal == sumOrderItemsSubtotal(data.items))
+        && data.totalAmount == sumOrderItemsSubtotal(data.items) + (('deliveryCharge' in data && data.deliveryCharge is number) ? data.deliveryCharge : 0);
+    }
+
+    // 🔒 1. PRIVATE LEDGER & FINANCIAL STORE
+    match /users/{userId} {
+      allow read, delete: if isOwner(userId);
+      allow create, update: if isOwner(userId)
+        && request.resource.data.keys().size() <= 25;
+
+      match /profile/{docId} {
+        allow read, delete: if isOwner(userId);
+        allow create, update: if isOwner(userId)
+          && request.resource.data.keys().hasOnly(['displayName', 'email', 'photoURL', 'updatedAt'])
+          && (!('displayName' in request.resource.data) || isValidString(request.resource.data.displayName, 0, 120))
+          && (!('email' in request.resource.data) || isValidString(request.resource.data.email, 0, 254))
+          && (!('photoURL' in request.resource.data) || isValidString(request.resource.data.photoURL, 0, 2048));
+      }
+
+      match /settings/{docId} {
+        allow read, delete: if isOwner(userId);
+        allow create, update: if isOwner(userId)
+          && isValidSettingsData(request.resource.data);
+      }
+
+      match /businessList/{docId} {
+        allow read, delete: if isOwner(userId);
+        allow create, update: if isOwner(userId)
+          && request.resource.data.keys().hasOnly(['businesses', 'updatedAt'])
+          && request.resource.data.businesses is list
+          && request.resource.data.businesses.size() <= 50;
+      }
+
+      match /sheetsConfig/{docId} {
+        allow read, delete: if isOwner(userId);
+        allow create, update: if isOwner(userId)
+          && isValidSheetsConfigData(request.resource.data);
+      }
+
+      match /trxRegistry/{regId} {
+        allow read: if isOwner(userId);
+        allow create: if isOwner(userId)
+          && isValidString(regId, 1, 150)
+          && request.resource.data.keys().hasOnly(['provider', 'trxId', 'orderId', 'bizId', 'verifiedAmount', 'verifiedAt'])
+          && isValidString(request.resource.data.provider, 1, 30)
+          && isValidString(request.resource.data.trxId, 1, 100)
+          && isValidString(request.resource.data.orderId, 1, 100);
+        allow update, delete: if false;
+      }
+
+      match /businesses/{bizId} {
+        allow read, delete: if isOwner(userId);
+        allow create, update: if isOwner(userId)
+          && isValidString(bizId, 1, 100)
+          && request.resource.data.keys().size() <= 30;
+
+        match /days/{dateKey} {
+          allow read, delete: if isOwner(userId);
+          allow create, update: if isOwner(userId)
+            && isValidString(dateKey, 8, 20)
+            && request.resource.data.dateKey == dateKey
+            && request.resource.data.keys().size() <= 60
+            && (!('status' in request.resource.data) || request.resource.data.status in ['not_started', 'open', 'closed', 'finalized'])
+            && (!('transactions' in request.resource.data) || (request.resource.data.transactions is list && request.resource.data.transactions.size() <= 5000))
+            && (!('inventory' in request.resource.data) || (request.resource.data.inventory is list && request.resource.data.inventory.size() <= 5000))
+            && (!('wallets' in request.resource.data) || request.resource.data.wallets is map);
+        }
+
+        match /contacts/{contactId} {
+          allow read, delete: if isOwner(userId);
+          allow create, update: if isOwner(userId)
+            && isValidString(contactId, 1, 100)
+            && request.resource.data.keys().hasOnly([
+              'id', 'name', 'phone', 'type', 'address', 'note',
+              'openingBalance', 'currentBalance', 'interestRate',
+              'creditLimit', 'dueDate', 'createdAt', 'updatedAt',
+              'isBlacklisted', 'rtoCount'
+            ])
+            && isValidString(request.resource.data.name, 1, 150)
+            && (!('phone' in request.resource.data) || isValidString(request.resource.data.phone, 0, 30))
+            && (!('currentBalance' in request.resource.data) || isValidNumber(request.resource.data.currentBalance, -1000000000, 1000000000))
+            && (!('openingBalance' in request.resource.data) || isValidNumber(request.resource.data.openingBalance, -1000000000, 1000000000));
+        }
+
+        match /contactTxs/{contactId} {
+          allow read, delete: if isOwner(userId);
+          allow create, update: if isOwner(userId)
+            && isValidString(contactId, 1, 100)
+            && request.resource.data.keys().hasOnly(['transactions', 'updatedAt'])
+            && request.resource.data.transactions is list
+            && request.resource.data.transactions.size() <= 5000;
+        }
+
+        match /onlineOrders/{orderId} {
+          allow read: if isOwner(userId);
+          allow delete: if isOwner(userId)
+            && resource.data.status != 'settled';
+          allow create: if isOwner(userId)
+            && isValidString(orderId, 1, 100)
+            && request.resource.data.keys().size() <= 40
+            && (!('status' in request.resource.data) || request.resource.data.status in ['draft', 'confirmed'])
+            && (!('paymentStatus' in request.resource.data) || request.resource.data.paymentStatus in ['pending', 'unpaid', 'awaiting_payment', 'submitted_for_verification', 'due_on_delivery'])
+            && (!('totalAmount' in request.resource.data) || isValidNumber(request.resource.data.totalAmount, 0, 100000000));
+          allow update: if isOwner(userId)
+            && isValidString(orderId, 1, 100)
+            && request.resource.data.keys().size() <= 40
+            && (!('status' in request.resource.data) || request.resource.data.status in ['draft', 'confirmed', 'packed', 'shipped', 'delivered', 'settled', 'returned', 'cancelled'])
+            && (!('totalAmount' in request.resource.data) || isValidNumber(request.resource.data.totalAmount, 0, 100000000))
+            && (resource.data.status != 'settled' || request.resource.data.status == 'settled')
+            && (!('status' in request.resource.data) || !(resource.data.status != 'settled' && request.resource.data.status == 'settled') || (
+              resource.data.status == 'delivered'
+              && ('settlementDateKey' in request.resource.data && isValidString(request.resource.data.settlementDateKey, 8, 20))
+              && ('settledAt' in request.resource.data)
+              && ('settlementWallet' in request.resource.data)
+              && isValidSettlementDayClaim(userId, bizId, orderId, request.resource.data)
+            ))
+            && (!('status' in request.resource.data) || request.resource.data.status != 'cancelled' || resource.data.status in ['draft', 'confirmed', 'packed', 'shipped', 'cancelled'])
+            && (!('status' in request.resource.data) || request.resource.data.status != 'returned' || resource.data.status in ['shipped', 'returned'])
+            && (resource.data.status != 'returned' || request.resource.data.status == 'returned')
+            && (resource.data.status != 'cancelled' || request.resource.data.status == 'cancelled')
+            && (!('paymentStatus' in request.resource.data) || !(resource.data.paymentStatus != 'verified' && request.resource.data.paymentStatus == 'verified') || (
+              resource.data.status in ['draft', 'confirmed', 'packed', 'shipped']
+              && (!('status' in request.resource.data) || request.resource.data.status in ['draft', 'confirmed', 'packed', 'shipped'])
+              && !('status' in request.resource.data && request.resource.data.status in ['cancelled', 'returned', 'settled'])
+              && ('paymentDateKey' in request.resource.data && isValidString(request.resource.data.paymentDateKey, 8, 20))
+              && ('paymentVerifiedAt' in request.resource.data)
+              && ('paymentWallet' in request.resource.data)
+              && isValidPaymentVerificationDayClaim(userId, bizId, orderId, request.resource.data)
+              && (
+                !('paymentMethod' in request.resource.data)
+                || !(request.resource.data.paymentMethod in ['bkash_manual', 'nagad_manual', 'rocket_manual'])
+                || (
+                  ('allowWithoutTrxId' in request.resource.data && request.resource.data.allowWithoutTrxId == true && 'withoutTrxIdReason' in request.resource.data && request.resource.data.withoutTrxIdReason is string && request.resource.data.withoutTrxIdReason.size() >= 5)
+                  || (
+                    (('verifiedTrxId' in request.resource.data && request.resource.data.verifiedTrxId.size() >= 4) || ('paymentTrxId' in request.resource.data && request.resource.data.paymentTrxId.size() >= 4))
+                    && hasValidTrxRegistryClaim(userId, orderId, request.resource.data)
+                  )
+                )
+              )
+            ))
+            && (
+              (resource.data.status != 'settled' && (!('status' in request.resource.data) || request.resource.data.status != 'settled')) || (
+                (!('totalAmount' in resource.data) || request.resource.data.totalAmount == resource.data.totalAmount)
+                && (!('codAmount' in resource.data) || request.resource.data.codAmount == resource.data.codAmount)
+                && (!('netAmount' in resource.data) || request.resource.data.netAmount == resource.data.netAmount)
+                && (!('settlementWallet' in resource.data) || request.resource.data.settlementWallet == resource.data.settlementWallet)
+                && (!('settlementAmount' in resource.data) || request.resource.data.settlementAmount == resource.data.settlementAmount)
+                && (!('settledAt' in resource.data) || request.resource.data.settledAt == resource.data.settledAt)
+                && (!('adjustmentApproved' in resource.data) || request.resource.data.adjustmentApproved == resource.data.adjustmentApproved)
+                && (!('adjustmentReason' in resource.data) || request.resource.data.adjustmentReason == resource.data.adjustmentReason)
+                && (!('adjustmentDiscrepancy' in resource.data) || request.resource.data.adjustmentDiscrepancy == resource.data.adjustmentDiscrepancy)
+                && (!('courierCharge' in resource.data) || request.resource.data.courierCharge == resource.data.courierCharge)
+                && (!('codFee' in resource.data) || request.resource.data.codFee == resource.data.codFee)
+                && (!('netFromCourier' in resource.data) || request.resource.data.netFromCourier == resource.data.netFromCourier)
+                && (!('paymentTrxId' in resource.data) || request.resource.data.paymentTrxId == resource.data.paymentTrxId)
+                && (!('verifiedTrxId' in resource.data) || request.resource.data.verifiedTrxId == resource.data.verifiedTrxId)
+                && (!('paymentWallet' in resource.data) || request.resource.data.paymentWallet == resource.data.paymentWallet)
+                && (!('advancePaid' in resource.data) || request.resource.data.advancePaid == resource.data.advancePaid)
+                && (!('advanceWallet' in resource.data) || request.resource.data.advanceWallet == resource.data.advanceWallet)
+                && (!('paymentStatus' in resource.data) || request.resource.data.paymentStatus == resource.data.paymentStatus)
+                && (!('paymentMethod' in resource.data) || request.resource.data.paymentMethod == resource.data.paymentMethod)
+                && (!('items' in resource.data) || request.resource.data.items == resource.data.items)
+              )
+            );
+        }
+
+        match /auditLog/{logId} {
+          allow read: if isOwner(userId);
+          allow create: if isOwner(userId)
+            && isValidString(logId, 1, 100)
+            && isValidAuditLogData(request.resource.data);
+          // Tamper-resistant append-only audit trail: client-side updates and deletes are strictly forbidden
+          allow update, delete: if false;
+        }
+
+        match /meta/{metaId} {
+          allow read, delete: if isOwner(userId);
+          allow create, update: if isOwner(userId)
+            && isValidString(metaId, 1, 50)
+            && request.resource.data.keys().size() <= 50;
+        }
+
+        match /trxRegistry/{regId} {
+          allow read: if isOwner(userId);
+          allow create: if isOwner(userId)
+            && isValidString(regId, 1, 150)
+            && request.resource.data.keys().hasOnly(['provider', 'trxId', 'orderId', 'bizId', 'verifiedAmount', 'verifiedAt'])
+            && isValidString(request.resource.data.provider, 1, 30)
+            && isValidString(request.resource.data.trxId, 1, 100)
+            && isValidString(request.resource.data.orderId, 1, 100);
+          allow update, delete: if false;
+        }
+      }
+    }
+
+    // 🌐 2. PUBLIC DIGITAL STOREFRONTS
+    match /stores/{shopSlug} {
+      // 🔒 Owner-only read: Prevents non-owner authenticated users from accessing private store metadata
+      allow get, list: if isAuthenticated()
+        && resource.data.ownerUserId == request.auth.uid;
+
+      allow create: if isAuthenticated()
+        && isValidString(shopSlug, 3, 50)
+        && request.resource.data.ownerUserId == request.auth.uid
+        && isValidStoreData(request.resource.data);
+
+      allow update: if isAuthenticated()
+        && resource.data.ownerUserId == request.auth.uid
+        && request.resource.data.ownerUserId == resource.data.ownerUserId
+        && isValidStoreData(request.resource.data);
+
+      allow delete: if isAuthenticated()
+        && resource.data.ownerUserId == request.auth.uid;
+
+      match /public/{docId} {
+        allow read: if true;
+
+        allow create, update: if isAuthenticated()
+          && docId == 'info'
+          && request.auth.uid == get(/databases/$(database)/documents/stores/$(shopSlug)).data.ownerUserId
+          && isValidPublicStoreInfoData(request.resource.data);
+
+        allow delete: if isAuthenticated()
+          && request.auth.uid == get(/databases/$(database)/documents/stores/$(shopSlug)).data.ownerUserId;
+      }
+
+      match /products/{productId} {
+        allow read: if true;
+
+        allow create, update: if isAuthenticated()
+          && isValidString(productId, 1, 100)
+          && request.auth.uid == get(/databases/$(database)/documents/stores/$(shopSlug)).data.ownerUserId
+          && isValidPublicProductData(request.resource.data);
+
+        allow delete: if isAuthenticated()
+          && request.auth.uid == get(/databases/$(database)/documents/stores/$(shopSlug)).data.ownerUserId;
+      }
+
+      match /orders/{orderId} {
+        allow create: if (isValidString(orderId, 1, 100)
+          && request.resource.data.id == orderId
+          && exists(/databases/$(database)/documents/stores/$(shopSlug))
+          && (!('isActive' in get(/databases/$(database)/documents/stores/$(shopSlug)).data) || get(/databases/$(database)/documents/stores/$(shopSlug)).data.isActive == true)
+          && isValidIncomingCustomerOrder(request.resource.data))
+          || (isAuthenticated()
+            && isValidString(orderId, 1, 100)
+            && request.resource.data.id == orderId
+            && request.auth.uid == get(/databases/$(database)/documents/stores/$(shopSlug)).data.ownerUserId);
+
+        allow read, update, delete: if isAuthenticated()
+          && request.auth.uid == get(/databases/$(database)/documents/stores/$(shopSlug)).data.ownerUserId;
+      }
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

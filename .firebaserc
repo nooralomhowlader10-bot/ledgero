@@ -1,0 +1,27 @@
+{
+  "projects": {
+    "default": "shopbook-460ca"
+  },
+  "targets": {
+    "shopbook-460ca": {
+      "hosting": {
+        "app": [
+          "shopbook-app"
+        ],
+        "main": [
+          "shopbook-460ca"
+        ],
+        "bd": [
+          "shopbook-bd"
+        ],
+        "ledgero-app": [
+          "ledgero-app"
+        ],
+        "ledgero-bd": [
+          "ledgero-bd"
+        ]
+      }
+    }
+  },
+  "etags": {}
+}

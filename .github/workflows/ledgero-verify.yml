@@ -1,0 +1,58 @@
+name: Ledgero release verification
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    name: Fresh build and Firestore Rules tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Set up Java for Firestore Emulator
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Cache Firebase Emulator binaries
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/firebase/emulators
+          key: firebase-firestore-emulator-${{ runner.os }}-${{ hashFiles('firebase.json') }}-cli-15.33.0
+
+      - name: Install reproducible project dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Install pinned Firebase CLI
+        run: npm install --global firebase-tools@15.33.0
+
+      - name: Run all five verification gates
+        env:
+          CI: 'true'
+          LEDGERO_EMULATOR_TIMEOUT_MS: '600000'
+        run: npm run verify:all
+
+      - name: Upload verification artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ledgero-verification-${{ github.run_id }}
+          if-no-files-found: warn
+          path: |
+            tests/artifacts/**
+            firestore-debug.log

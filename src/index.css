@@ -1,0 +1,484 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --color-slate-850: #172033;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   LEDGERO — Dual Mode Theme Variables
+   data-mode="easy"    → Friendly, large, green-based (Khatabook/OkCredit)
+   data-mode="advanced" → Premium, compact, purple-based (QuickBooks/Xero)
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+:root,
+[data-mode="easy"] {
+  --m-primary: #008060;
+  --m-primary-light: #e6f5f0;
+  --m-accent: #0ea5e9;
+  --m-danger: #D82C0D;
+  --m-danger-light: #fef2f2;
+  --m-bg: #F4F6F8;
+  --m-surface: #FFFFFF;
+  --m-surface-border: transparent;
+  --m-text: #1a1a1a;
+  --m-text-secondary: #6b7280;
+  --m-text-muted: #9ca3af;
+  --m-radius: 16px;
+  --m-radius-sm: 12px;
+  --m-radius-lg: 20px;
+  --m-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  --m-shadow-hover: 0 4px 20px rgba(0,0,0,0.1);
+  --m-font-base: 16px;
+  --m-font-sm: 14px;
+  --m-font-lg: 20px;
+  --m-font-xl: 28px;
+}
+
+[data-mode="advanced"] {
+  --m-primary: #7C3AED;
+  --m-primary-light: #f3e8ff;
+  --m-accent: #3B82F6;
+  --m-danger: #ef4444;
+  --m-danger-light: #fef2f2;
+  --m-bg: #F8FAFC;
+  --m-surface: #FFFFFF;
+  --m-surface-border: #E2E8F0;
+  --m-text: #0F172A;
+  --m-text-secondary: #475569;
+  --m-text-muted: #94a3b8;
+  --m-radius: 8px;
+  --m-radius-sm: 6px;
+  --m-radius-lg: 12px;
+  --m-shadow: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06);
+  --m-shadow-hover: 0 4px 6px rgba(0,0,0,0.1);
+  --m-font-base: 14px;
+  --m-font-sm: 12px;
+  --m-font-lg: 18px;
+  --m-font-xl: 24px;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   LEDGERO — Professional Color System
+   
+   Color Theory Applied:
+   ─────────────────────
+   1. CONTRAST: Dark mode uses deep navy (slate-950/900) — not pure black.
+      Cards use slate-800 with 50% opacity for subtle elevation.
+      This creates a "layered depth" effect that's easy on the eyes.
+   
+   2. TEXT HIERARCHY (Weber-Fechner Law):
+      - Primary text: slate-200 (#e2e8f0) — high contrast for readability
+      - Secondary text: slate-400 (#94a3b8) — reduced weight for labels
+      - Tertiary text: slate-500 (#64748b) — minimal weight for hints
+   
+   3. ACCENT COLORS (Complementary Harmony):
+      - Receivable/পাবো: Sky (cool, calm, professional)
+      - Payable/দেবো: Teal/Emerald (cool, calming, trustworthy)
+      - Primary action: Indigo (professional, neutral CTA)
+      - Warnings: Amber (natural caution signal, not alarming like red)
+      - Success: Emerald (universal "positive" signal)
+   
+   4. COLOR TEMPERATURE BALANCE:
+      Warm accents (amber) + Cool base (slate/indigo) = balanced palette
+      No pure red (#ef4444) — it triggers stress response
+   
+   5. DARK MODE SPECIFICS:
+      - Card bg: hsla(222, 47%, 18%, 0.7) — translucent slate-800
+      - Borders: slate-700 — subtle separation without harsh lines
+      - Shadows removed in dark mode (unnecessary with dark bg)
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── Base Dark Mode ──────────────────────────────────────────────────────── */
+.dark {
+  color-scheme: dark;
+}
+
+/* ── Text Color Hierarchy ────────────────────────────────────────────────── */
+.dark .text-gray-900 {
+  color: #e2e8f0; /* slate-200: primary text */
+}
+
+.dark .text-gray-800 {
+  color: #e2e8f0; /* slate-200: bright section headers */
+}
+
+.dark .text-gray-700 {
+  color: #cbd5e1; /* slate-300: for section headers */
+}
+
+.dark .text-gray-600 {
+  color: #cbd5e1; /* slate-300: for section labels */
+}
+
+.dark .text-gray-500 {
+  color: #94a3b8; /* slate-400: readable */
+}
+
+.dark .text-gray-400 {
+  color: #94a3b8; /* slate-400: readable secondary text */
+}
+
+/* ── Background Layers (depth through opacity) ───────────────────────────── */
+.dark .bg-white {
+  background-color: rgba(30, 41, 59, 0.7); /* slate-800 @ 70% — translucent card */
+}
+
+.dark .bg-slate-50 {
+  background-color: #0f172a; /* slate-950: deepest background */
+}
+
+.dark .bg-gray-50,
+.dark [class*="bg-gray-50"] {
+  background-color: rgba(30, 41, 59, 0.5) !important; /* slate-800 @ 50% — subtle bg */
+}
+
+.dark .bg-gray-100,
+.dark .bg-slate-100,
+.dark [class*="bg-gray-100"],
+.dark [class*="bg-slate-100"] {
+  background-color: rgba(51, 65, 85, 0.6) !important; /* slate-700 @ 60% */
+}
+
+/* ── Border Colors (subtle, not harsh) ───────────────────────────────────── */
+.dark .border-slate-100,
+.dark .border-slate-200,
+.dark .border-gray-200,
+.dark .border-gray-100 {
+  border-color: rgba(51, 65, 85, 0.5); /* slate-700 @ 50% */
+}
+
+.dark .divide-slate-100 > * + *,
+.dark .divide-gray-100 > * + * {
+  border-color: rgba(51, 65, 85, 0.4); /* subtle dividers */
+}
+
+/* ── Gradient Overrides ──────────────────────────────────────────────────── */
+.dark .from-white {
+  --tw-gradient-from: rgba(30, 41, 59, 0.7);
+}
+
+.dark .to-slate-50\/50 {
+  --tw-gradient-to: rgba(15, 23, 42, 0.5);
+}
+
+/* ── Universal Colored Card & Badge Dark Mode Adaptation ────────────────── */
+.dark [class*="bg-amber-50"] {
+  background-color: rgba(120, 53, 15, 0.22) !important;
+}
+.dark [class*="bg-amber-100"] {
+  background-color: rgba(146, 64, 14, 0.28) !important;
+}
+.dark [class*="bg-orange-50"] {
+  background-color: rgba(124, 45, 18, 0.22) !important;
+}
+.dark [class*="bg-orange-100"] {
+  background-color: rgba(154, 52, 18, 0.28) !important;
+}
+.dark [class*="bg-emerald-50"] {
+  background-color: rgba(6, 78, 59, 0.22) !important;
+}
+.dark [class*="bg-emerald-100"] {
+  background-color: rgba(6, 95, 70, 0.28) !important;
+}
+.dark [class*="bg-blue-50"] {
+  background-color: rgba(30, 58, 138, 0.22) !important;
+}
+.dark [class*="bg-blue-100"] {
+  background-color: rgba(30, 64, 175, 0.28) !important;
+}
+.dark [class*="bg-indigo-50"] {
+  background-color: rgba(49, 46, 129, 0.22) !important;
+}
+.dark [class*="bg-indigo-100"] {
+  background-color: rgba(55, 48, 163, 0.28) !important;
+}
+.dark [class*="bg-cyan-50"] {
+  background-color: rgba(22, 78, 99, 0.22) !important;
+}
+.dark [class*="bg-cyan-100"] {
+  background-color: rgba(21, 94, 117, 0.28) !important;
+}
+.dark [class*="bg-pink-50"] {
+  background-color: rgba(131, 24, 67, 0.22) !important;
+}
+.dark [class*="bg-pink-100"] {
+  background-color: rgba(157, 23, 77, 0.28) !important;
+}
+.dark [class*="bg-purple-50"] {
+  background-color: rgba(88, 28, 135, 0.22) !important;
+}
+.dark [class*="bg-purple-100"] {
+  background-color: rgba(107, 33, 168, 0.28) !important;
+}
+.dark [class*="bg-rose-50"] {
+  background-color: rgba(136, 19, 55, 0.2) !important;
+}
+.dark [class*="bg-rose-100"] {
+  background-color: rgba(159, 18, 57, 0.28) !important;
+}
+.dark [class*="bg-sky-50"] {
+  background-color: rgba(7, 89, 133, 0.22) !important;
+}
+.dark [class*="bg-sky-100"] {
+  background-color: rgba(12, 74, 110, 0.28) !important;
+}
+.dark [class*="bg-teal-50"] {
+  background-color: rgba(19, 78, 74, 0.22) !important;
+}
+.dark [class*="bg-teal-100"] {
+  background-color: rgba(17, 94, 89, 0.28) !important;
+}
+
+/* ── Universal Colored Border Dark Mode Adaptation ──────────────────────── */
+.dark [class*="border-amber-200"],
+.dark [class*="border-amber-300"] {
+  border-color: rgba(217, 119, 6, 0.35) !important;
+}
+.dark [class*="border-orange-200"],
+.dark [class*="border-orange-300"] {
+  border-color: rgba(234, 88, 12, 0.35) !important;
+}
+.dark [class*="border-emerald-200"],
+.dark [class*="border-emerald-300"] {
+  border-color: rgba(16, 185, 129, 0.35) !important;
+}
+.dark [class*="border-blue-200"],
+.dark [class*="border-blue-300"] {
+  border-color: rgba(59, 130, 246, 0.35) !important;
+}
+.dark [class*="border-indigo-200"],
+.dark [class*="border-indigo-300"] {
+  border-color: rgba(99, 102, 241, 0.35) !important;
+}
+.dark [class*="border-cyan-200"],
+.dark [class*="border-cyan-300"] {
+  border-color: rgba(6, 182, 212, 0.35) !important;
+}
+.dark [class*="border-pink-200"],
+.dark [class*="border-pink-300"] {
+  border-color: rgba(236, 72, 153, 0.35) !important;
+}
+.dark [class*="border-purple-200"],
+.dark [class*="border-purple-300"] {
+  border-color: rgba(168, 85, 247, 0.35) !important;
+}
+.dark [class*="border-rose-200"],
+.dark [class*="border-rose-300"] {
+  border-color: rgba(244, 63, 94, 0.35) !important;
+}
+.dark [class*="border-sky-200"],
+.dark [class*="border-sky-300"] {
+  border-color: rgba(14, 165, 233, 0.35) !important;
+}
+.dark [class*="border-teal-200"],
+.dark [class*="border-teal-300"] {
+  border-color: rgba(20, 184, 166, 0.35) !important;
+}
+
+/* ── Universal Text Contrast for Colored Labels & Badges in Dark Mode ───── */
+.dark [class*="text-amber-700"],
+.dark [class*="text-amber-800"],
+.dark [class*="text-amber-900"],
+.dark [class*="text-amber-950"] {
+  color: #fbbf24 !important; /* amber-400 */
+}
+.dark [class*="text-orange-600"],
+.dark [class*="text-orange-700"],
+.dark [class*="text-orange-800"],
+.dark [class*="text-orange-900"],
+.dark [class*="text-orange-950"] {
+  color: #fb923c !important; /* orange-400 */
+}
+.dark [class*="text-emerald-700"],
+.dark [class*="text-emerald-800"],
+.dark [class*="text-emerald-900"],
+.dark [class*="text-emerald-950"] {
+  color: #34d399 !important; /* emerald-400 */
+}
+.dark [class*="text-blue-600"],
+.dark [class*="text-blue-700"],
+.dark [class*="text-blue-800"],
+.dark [class*="text-blue-900"],
+.dark [class*="text-blue-950"] {
+  color: #60a5fa !important; /* blue-400 */
+}
+.dark [class*="text-indigo-600"],
+.dark [class*="text-indigo-700"],
+.dark [class*="text-indigo-800"],
+.dark [class*="text-indigo-900"],
+.dark [class*="text-indigo-950"] {
+  color: #818cf8 !important; /* indigo-400 */
+}
+.dark [class*="text-cyan-600"],
+.dark [class*="text-cyan-700"],
+.dark [class*="text-cyan-800"],
+.dark [class*="text-cyan-900"],
+.dark [class*="text-cyan-950"],
+.dark .text-cyan-850 {
+  color: #22d3ee !important; /* cyan-400 */
+}
+.dark [class*="text-pink-600"],
+.dark [class*="text-pink-700"],
+.dark [class*="text-pink-800"],
+.dark [class*="text-pink-900"],
+.dark [class*="text-pink-950"] {
+  color: #f472b6 !important; /* pink-400 */
+}
+.dark [class*="text-purple-600"],
+.dark [class*="text-purple-700"],
+.dark [class*="text-purple-800"],
+.dark [class*="text-purple-900"],
+.dark [class*="text-purple-950"] {
+  color: #c084fc !important; /* purple-400 */
+}
+.dark [class*="text-rose-600"],
+.dark [class*="text-rose-700"],
+.dark [class*="text-rose-800"],
+.dark [class*="text-rose-900"],
+.dark [class*="text-rose-950"] {
+  color: #fb7185 !important; /* rose-400 */
+}
+.dark [class*="text-sky-600"],
+.dark [class*="text-sky-700"],
+.dark [class*="text-sky-800"],
+.dark [class*="text-sky-900"] {
+  color: #38bdf8 !important; /* sky-400 */
+}
+.dark [class*="text-teal-600"],
+.dark [class*="text-teal-700"],
+.dark [class*="text-teal-800"],
+.dark [class*="text-teal-900"] {
+  color: #2dd4bf !important; /* teal-400 */
+}
+.dark .text-slate-800 {
+  color: #e2e8f0; /* slate-200: bright headers */
+}
+
+/* ── Table Styling ───────────────────────────────────────────────────────── */
+.dark table thead {
+  background-color: rgba(30, 41, 59, 0.8);
+  color: #94a3b8;
+}
+
+.dark table tbody tr {
+  border-color: rgba(51, 65, 85, 0.3);
+}
+
+.dark table tbody tr:hover {
+  background-color: rgba(30, 41, 59, 0.5);
+}
+
+/* ── Form Elements ───────────────────────────────────────────────────────── */
+.dark input,
+.dark select,
+.dark textarea {
+  background-color: rgba(15, 23, 42, 0.8);
+  color: #e2e8f0;
+  border-color: rgba(71, 85, 105, 0.5);
+}
+
+.dark input:focus,
+.dark select:focus,
+.dark textarea:focus {
+  border-color: #6366f1; /* indigo-500 focus ring */
+  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.15);
+}
+
+.dark input::placeholder,
+.dark textarea::placeholder {
+  color: #475569;
+}
+
+/* ── Shadow Removal in Dark (shadows are invisible on dark bg) ────────────── */
+.dark .shadow-sm,
+.dark .shadow-xs {
+  box-shadow: none;
+}
+
+/* ── Hover States ────────────────────────────────────────────────────────── */
+.dark .hover\:bg-slate-50\/80:hover {
+  background-color: rgba(30, 41, 59, 0.4) !important;
+}
+
+/* ── Mobile Side Drawer Animation ──────────────────────────────────────── */
+@keyframes slideInRight {
+  from { transform: translateX(100%); }
+  to   { transform: translateX(0); }
+}
+.animate-slideInRight {
+  animation: slideInRight 0.25s ease-out;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   PRINT STYLES — Full page printing for Analytics reports
+   ═══════════════════════════════════════════════════════════════════════════ */
+@media print {
+  /* Force white background for readability */
+  body, html {
+    background: white !important;
+    color: black !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Remove fixed navbars and footers */
+  nav, header, footer,
+  [class*="bottom-nav"],
+  [class*="floating"],
+  [class*="AdvancedMegaNavbar"],
+  [class*="AIAgent"],
+  [class*="nam-ai"],
+  button[title*="NAM AI"] {
+    display: none !important;
+  }
+
+  /* Make all content visible — no scroll clipping */
+  * {
+    overflow: visible !important;
+    max-height: none !important;
+  }
+
+  /* Remove shadows and borders for cleaner print */
+  .shadow, .shadow-lg, .shadow-xl, .shadow-2xl {
+    box-shadow: none !important;
+  }
+
+  /* Ensure page breaks work */
+  .page-break-before { page-break-before: always; }
+  .page-break-after { page-break-after: always; }
+  
+  /* Prevent cutting elements in half */
+  section, article, div[class*="card"], div[class*="Card"] {
+    page-break-inside: avoid;
+  }
+
+  /* Show full width */
+  main, [role="main"], .container {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  /* Make dark backgrounds printable */
+  [class*="bg-slate-9"], [class*="bg-slate-8"], [class*="bg-gray-9"], [class*="bg-gray-8"] {
+    background: #f1f5f9 !important;
+    border: 1px solid #cbd5e1 !important;
+  }
+
+  /* Make text dark for print */
+  [class*="text-white"], [class*="text-slate-1"], [class*="text-slate-2"], [class*="text-slate-3"] {
+    color: #1e293b !important;
+  }
+  [class*="text-emerald"], [class*="text-green"] {
+    color: #059669 !important;
+  }
+  [class*="text-rose"], [class*="text-red"] {
+    color: #dc2626 !important;
+  }
+  [class*="text-amber"], [class*="text-yellow"] {
+    color: #d97706 !important;
+  }
+}

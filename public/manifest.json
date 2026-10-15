@@ -1,0 +1,21 @@
+{
+  "name": "Ledgero — দোকানের হিসাব",
+  "short_name": "Ledgero",
+  "description": "দোকানের ডিজিটাল হিসাবরক্ষক — ক্লাউড সিংক ও Google Sheets সাপোর্ট সহ",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "theme_color": "#0f172a",
+  "background_color": "#0f172a",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["business", "finance", "productivity"],
+  "lang": "bn",
+  "dir": "ltr"
+}

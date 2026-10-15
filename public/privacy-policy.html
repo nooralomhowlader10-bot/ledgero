@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy | Ledgero by AN3 AI</title>
+    <style>
+        body { font-family: system-ui, -apple-system, sans-serif; max-width: 840px; margin: 0 auto; padding: 24px; line-height: 1.65; color: #1e293b; background: #f8fafc; }
+        h1, h2, h3 { color: #0f172a; }
+        h1 { border-bottom: 2px solid #e2e8f0; padding-bottom: 12px; }
+        .card { background: #ffffff; padding: 28px; border-radius: 12px; border: 1px solid #e2e8f0; margin-bottom: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+        ul { padding-left: 20px; }
+        li { margin-bottom: 8px; }
+        .badge { display: inline-block; background: #e0f2fe; color: #0369a1; padding: 4px 10px; border-radius: 999px; font-size: 0.85rem; font-weight: 600; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <span class="badge">Official FinTech Privacy Policy</span>
+        <h1>Privacy Policy — Ledgero by AN3 AI</h1>
+        <p><strong>Last Updated:</strong> October 2026</p>
+
+        <h2>1. Introduction</h2>
+        <p>Ledgero ("we", "our", or "us") is a digital accounting, inventory, and POS application built for merchants and small businesses. This Privacy Policy explains transparently what data we collect, how it is stored, and which third-party cloud services process it when you use specific features.</p>
+
+        <h2>2. Data We Collect & Store</h2>
+        <ul>
+            <li><strong>Account Identity (Google Sign-In):</strong> Your name, email address, profile photo URL, and unique Firebase UID provided via Google OAuth 2.0. We never collect or store your password.</li>
+            <li><strong>Business & Financial Ledger Data:</strong> Shop name, wallet balances, daily sales, expenses, inventory items, online order records, and Khata (customer/supplier receivable & payable) records.</li>
+            <li><strong>Public Storefront Data (Optional):</strong> If you enable the "Go Online" storefront feature, only your chosen shop display name, WhatsApp order number, and allowlisted product fields (<code>name</code>, <code>price</code>, <code>unit</code>, <code>category</code>, <code>inStock</code>, <code>stock</code>, <code>addedAt</code>) become publicly viewable at your store link (<code>/s/your-shop-slug</code>). Both our client sync sanitizer and Cloud Firestore Security Rules strictly reject private cost and profit fields (<code>buyPrice</code>, <code>profit</code>, <code>cogs</code>, <code>batches</code>, <code>fifoCogs</code>) from ever being written to public store documents.</li>
+        </ul>
+
+        <h2>3. How Your Data Is Stored & Secured</h2>
+        <ul>
+            <li><strong>Cloud Firestore:</strong> Your private ledger data is stored in Google Cloud Firestore, encrypted in transit (HTTPS/TLS) and at rest (AES-256), isolated strictly under your authenticated UID with per-collection field allowlist validation.</li>
+            <li><strong>Local Offline Storage:</strong> To enable offline bookkeeping without internet, Ledgero caches your ledger state on your device using browser <code>localStorage</code> and <code>IndexedDB</code>.</li>
+        </ul>
+
+        <h2>4. AI Assistant (Dr. NAM) & Third-Party Service Disclosures</h2>
+        <ul>
+            <li><strong>Local Deterministic Engine vs. Google Gemini AI (Optional Feature):</strong> Standard financial queries and bookkeeping commands are processed locally on your device first. When cloud AI inference is enabled (via a server-side proxy <code>VITE_GEMINI_PROXY_URL</code> or an optional user-supplied Gemini API key kept strictly in ephemeral <code>sessionStorage</code> for the active tab session only and never persisted in <code>localStorage</code>), interacting with Dr. NAM AI or AI-assisted Voice Input transmits a contextual summary of your shop's financial state (liquidity balances, today's sales/expenses, profitability ratios, top debtors, low/dead stock items, and up to 6 recent chat messages) to the <strong>Google Gemini API</strong> (<code>generativelanguage.googleapis.com</code>) via HTTPS headers (<code>x-goog-api-key</code>) with client rate limiting (max 10 requests/minute, 100/day). If you do not wish to share data with Gemini AI, do not configure an AI key or do not use the AI Assistant.</li>
+            <li><strong>Google Sheets Auto-Backup (Optional Feature):</strong> When you explicitly authorize Google Sheets export, Ledgero uses the restricted <code>drive.file</code> OAuth scope to create and update monthly ledger spreadsheets inside your own Google Drive account.</li>
+            <li><strong>Voice Synthesis (TTS):</strong> Spoken AI responses use browser speech synthesis and TTS audio streams to read responses aloud.</li>
+            <li><strong>Zero Advertising:</strong> We do not sell, rent, or share your personal or financial data with any advertising networks or data brokers.</li>
+        </ul>
+
+        <h2>5. Backup Contents, Audit Log Retention & Account Deletion (Right to Erasure)</h2>
+        <p>You have full control to export, restore, or permanently delete your account and associated cloud and public store data:</p>
+        <ul>
+            <li><strong>What Is Included in Backups:</strong> Full cloud and local backups (Version 3) include your <code>settings</code>, <code>sheetsConfig</code>, <code>businesses</code>, daily ledgers (<code>days</code>), customer/supplier receivables &amp; payables (<code>contacts</code> and <code>contactTxs</code>), <code>onlineOrders</code>, public storefront configurations &amp; incoming order queues (<code>stores</code>), and your business reversal history (<code>auditLog</code>). Temporary session credentials stored in browser <code>sessionStorage</code> (such as Google Sheets OAuth tokens or optional session-only AI keys) are <strong>not</strong> included in backups.</li>
+            <li><strong>In-App Deletion:</strong> Open <strong>Profile / Settings &rarr; Delete Account</strong>, type <code>DELETE</code>, and confirm via Google Re-authentication. Ledgero deletes and verifies the removal of all mutable Firestore business subcollections (<code>days</code>, <code>contacts</code>, <code>contactTxs</code>, <code>onlineOrders</code>, <code>meta</code>), user profile/settings documents, and public storefront products/orders/stores before deleting your Firebase Auth account and clearing local storage.</li>
+            <li><strong>Tamper-Resistant Audit Log Retention Policy:</strong> To protect accounting integrity and prevent client-side tampering, financial reversal audit records (<code>/users/{userId}/businesses/{bizId}/auditLog</code>) are strictly append-only (<code>allow update, delete: if false</code> in client-side Firestore Security Rules). Client-side business or account deletion removes all operational data immediately while retaining the append-only <code>auditLog</code> subcollection until purged via a verified server-side Admin SDK compliance workflow.</li>
+            <li><strong>Web Deletion &amp; Audit Purge Portal:</strong> Visit our <a href="/delete-account">Account &amp; Data Deletion Page</a> for step-by-step instructions or email <a href="mailto:support@an3ai.com">support@an3ai.com</a> to request server-side purge of retained append-only audit logs.</li>
+        </ul>
+    </div>
+
+    <div class="card">
+        <h1>গোপনীয়তা নীতি (Privacy Policy — বাংলা সারসংক্ষেপ)</h1>
+        <p>লেজারো (Ledgero) আপনার ব্যবসার আর্থিক তথ্যের সর্বোচ্চ গোপনীয়তা ও নিরাপত্তা নিশ্চিত করতে প্রতিশ্রুতিবদ্ধ:</p>
+        <ul>
+            <li><strong>গুগল লগইন ও ক্লাউড নিরাপত্তা:</strong> আপনার পাসওয়ার্ড কখনোই আমাদের কাছে সংরক্ষিত থাকে না। আপনার ব্যবসার হিসাব Google Cloud Firestore-এ এনক্রিপ্টেড অবস্থায় এবং কঠোর ফিল্ড-ভ্যালিডেশন রুলসের অধীনে সুরক্ষিত থাকে। অফলাইনে কাজের সুবিধার্থে আপনার ডিভাইসের <code>localStorage</code> ও <code>IndexedDB</code>-তে ডেটা ক্যাশ থাকে।</li>
+            <li><strong>AI সহকারী (Dr. NAM) ও ভয়েস ডেটা:</strong> সাধারণ হিসাবের প্রশ্ন আপনার ডিভাইসের লোকাল ইঞ্জিনেই প্রসেস হয়। ক্লাউড AI (সার্ভার প্রক্সি অথবা শুধুমাত্র বর্তমান সেশনের <code>sessionStorage</code>-এ রাখা ঐচ্ছিক API Key; <code>localStorage</code>-এ কখনোই কী সংরক্ষণ করা হয় না) ব্যবহারের সময় সঠিক পরামর্শের জন্য দোকানের আর্থিক সারাংশ (ক্যাশ ব্যালেন্স, বিক্রি, লাভ-ক্ষতি, স্টকের তথ্য, বাকির তালিকা ও সাম্প্রতিক ৬টি চ্যাট মেসেজ) এনক্রিপ্টেড হেডারের মাধ্যমে রেট-লিমিটসহ (মিনিটে সর্বোচ্চ ১০টি) <strong>Google Gemini API</strong>-তে পাঠানো হয়।</li>
+            <li><strong>অনলাইন স্টোর (Go Online):</strong> আপনি অনলাইন স্টোর চালু করলে শুধু অনুমোদিত পাবলিক ফিল্ড (<code>name</code>, <code>price</code>, <code>unit</code>, <code>category</code>, <code>inStock</code>, <code>stock</code>, <code>addedAt</code>) প্রকাশিত হয়। অ্যাপ কোড এবং Firestore Security Rules উভয় স্তরেই পণ্যের ক্রয়মূল্য (<code>buyPrice</code>), লাভ (<code>profit</code>) ও ব্যাচ ডেটা (<code>batches</code>) পাবলিক স্টোরে লেখা সম্পূর্ণ নিষিদ্ধ ও ব্লক করা আছে।</li>
+            <li><strong>ব্যাকআপের বিষয়বস্তু ও অডিট লগ নীতি:</strong> ক্লাউড এবং লোকাল ব্যাকআপে আপনার ব্যবসার সেটিংস, প্রতিদিনের হিসাব (<code>days</code>), বাকি খাতা (<code>contacts</code> ও <code>contactTxs</code>), অনলাইন অর্ডার (<code>onlineOrders</code>), পাবলিক স্টোর (<code>stores</code>) এবং অডিট ইতিহাস (<code>auditLog</code>) অন্তর্ভুক্ত থাকে (<code>sessionStorage</code>-এর সাময়িক টোকেন ব্যাকআপে থাকে না)। হিসাবের স্বচ্ছতা রক্ষায় <code>auditLog</code> সম্পূর্ণ অপরিবর্তনীয় (append-only; ক্লায়েন্ট থেকে আপডেট বা ডিলিট নিষিদ্ধ)।</li>
+            <li><strong>সম্পূর্ণ ডেটা মুছে ফেলার অধিকার:</strong> আপনি যেকোনো সময় অ্যাপের <strong>প্রোফাইল &rarr; অ্যাকাউন্ট মুছুন (Delete Account)</strong> অপশন থেকে অথবা <a href="/delete-account">/delete-account</a> পেজের মাধ্যমে আপনার সম্পূর্ণ অ্যাকাউন্ট, ব্যবসার সব পরিবর্তনযোগ্য সাবকালেকশন এবং অনলাইন স্টোর যাচাইপূর্বক মুছে ফেলতে পারবেন। অপরিবর্তনীয় অডিট লগ সার্ভার-সাইড Admin SDK-এর মাধ্যমে মুছে ফেলতে <a href="mailto:support@an3ai.com">support@an3ai.com</a>-এ অনুরোধ করতে পারেন।</li>
+        </ul>
+        <p>যোগাযোগ: <a href="mailto:support@an3ai.com">support@an3ai.com</a></p>
+    </div>
+</body>
+</html>
