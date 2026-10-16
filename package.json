@@ -12,6 +12,7 @@
     "test:rules:embedded": "node tests/runEmulatorSuite.mjs",
     "test:emulator": "node scripts/testWithOfficialEmulator.mjs",
     "migrate:trx": "node scripts/migrateHistoricalTrx.mjs",
+    "verify:staging": "node scripts/verifyStagingWorkflow.mjs",
     "package": "node scripts/packZip.mjs",
     "verify:all": "node scripts/verifyAll.mjs"
   },

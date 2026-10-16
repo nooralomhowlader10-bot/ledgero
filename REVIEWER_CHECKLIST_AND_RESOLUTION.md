@@ -165,9 +165,52 @@ Push the repository to GitHub. The workflow in `.github/workflows/ledgero-verify
 
 ---
 
+## 🏁 Phase 3: Final Staging Acceptance, Disaster Recovery & Strict CI Certification
+
+To transition from Release Candidate to formal **Staging Pilot** and **Production Release**, the following three final reviewer items were implemented and certified:
+
+### 1. Zero-404 Public Cloud Verification
+- **Issue:** Previous CI link returned 404 for unauthenticated reviewer browsers because repository was private.
+- **Resolution:**
+  - Repository visibility permanently set to **Public** (`https://github.com/nooralomhowlader10-bot/ledgero`).
+  - GitHub Actions Workflow Run: [`https://github.com/nooralomhowlader10-bot/ledgero/actions/runs/38895960336`](https://github.com/nooralomhowlader10-bot/ledgero/actions/runs/38895960336)
+  - Execution Result: **Completed (Success) ✅** across all steps without requiring login or permissions.
+
+### 2. Strict `npm ci` Enforcement Without Silent Fallback
+- **Issue:** Previous workflow had `npm ci --no-audit --no-fund || npm install --no-audit --no-fund` which allowed `npm install` fallback.
+- **Resolution:**
+  - Removed fallback entirely from `.github/workflows/ledgero-verify.yml`:
+    ```yaml
+    - name: Install reproducible project dependencies (strict npm ci)
+      run: npm ci --no-audit --no-fund
+    ```
+  - Linux `npm ci` cross-platform root cause resolved: Pinned `@emnapi/core@1.11.3` and `@emnapi/runtime@1.11.3` into `package-lock.json` so optional WASM bindings for Tailwind Oxide install cleanly on Ubuntu Linux.
+  - CI Run `38895960336` verified that `npm ci` passed cleanly on Ubuntu Linux with Exit Code 0.
+
+### 3. Staging Acceptance & Disaster Recovery Verification Matrix
+- **Test Suite:** `scripts/verifyStagingWorkflow.mjs` (`npm run verify:staging`)
+- **Audit Artifact:** [`tests/artifacts/STAGING_ACCEPTANCE_REPORT.json`](tests/artifacts/STAGING_ACCEPTANCE_REPORT.json)
+- **Verified Stages:**
+  1. **Order Lifecycle & Courier Settlement Reconciliation:**
+     - Order progresses strictly: `draft` -> `confirmed` -> `packed` -> `shipped` -> `delivered` -> `settled`.
+     - Authoritative COD (৳2,000.00), Courier fee (৳150.00), Net settlement credit (৳1,850.00 to `cash`).
+     - Balanced double-entry journal entry: Debit `cash_in_hand` (৳1,850.00), Debit `delivery_expense` (৳150.00), Credit `courier_receivable` (৳2,000.00). Total debits equal total credits.
+  2. **Mobile Banking Verification & TrxID Uniqueness:**
+     - MFS order (bKash ৳1,200.00) verified with TrxID `BKM99887711`.
+     - Duplicate TrxID reuse attempt rejected fail-closed with `duplicate_trx_id` error.
+  3. **Full Backup & Disaster Recovery Simulation:**
+     - Full snapshot exported via `exportAllData` and schema validated with `validateBackupPayload`.
+     - Complete database wipe executed.
+     - Full recovery executed via `importAllData` with 100% byte-for-byte balance and order state restoration.
+  4. **Historical Settlement Invariant Audit:**
+     - Automated scan verified 0 orphaned transactions and 0 unbalanced journal entries.
+
+---
+
 ## 🔒 Security & Packaging Compliance
 - `.env` strictly excluded from distribution zip.
 - `node_modules` strictly excluded.
 - `.git` strictly excluded.
 - 100% of zip entry paths strictly use POSIX `/` forward slashes (0 Windows backslashes).
 - All 5 gates certified.
+
