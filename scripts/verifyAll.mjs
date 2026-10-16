@@ -121,7 +121,7 @@ fs.writeFileSync(logFilePath, logChunks.join('\n') + '\n', 'utf8');
 log(`📄 Saved audit summary log to: tests/artifacts/FULL_VERIFICATION_LOG.txt`);
 
 if (allPassed) {
-  log('\n🎉 ALL 5 AUTOMATED VERIFICATION GATES PASSED. Review staging/pilot and operational checks separately before production launch.');
+  log(`\n🎉 ALL ${gates.length} AUTOMATED VERIFICATION GATES PASSED. Review staging/pilot and operational checks separately before production launch.`);
   process.exit(0);
 } else {
   console.error('\n❌ ONE OR MORE CERTIFICATION GATES FAILED. Review logs above.');

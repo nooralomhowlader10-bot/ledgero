@@ -268,9 +268,9 @@ step('2.2 Duplicate TrxID reuse is rejected fail-closed with structured error', 
 });
 
 // -----------------------------------------------------------------------------
-// STAGE 3: Full Backup & Disaster Recovery Simulation
+// STAGE 3: State Engine Backup Export & Local Storage Recovery Simulation
 // -----------------------------------------------------------------------------
-console.log('\n💾 STAGE 3: Full Backup & Disaster Recovery Simulation');
+console.log('\n💾 STAGE 3: State Engine Backup Export & Local Storage Recovery Simulation');
 
 // Mock localStorage for storage.js backup/restore testing
 const memoryStorage = new Map();
@@ -302,7 +302,7 @@ step('3.1 Backup snapshot exports cleanly and passes payload validation', () => 
   assert.equal(validation.valid, true, 'Backup payload must pass structural validation');
 });
 
-step('3.2 Disaster Recovery: Full state wipe & restoration matches byte-for-byte', () => {
+step('3.2 Local Recovery: Full storage wipe & state restoration verifies wallet and order recovery', () => {
   // Capture pre-wipe snapshot
   const preWipeCashBalance = stagingState.dayData.wallets.cash.current;
   const preWipeBkashBalance = stagingState.dayData.wallets.bkash.current;

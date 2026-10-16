@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-10-16T12:15:04.494Z",
+  "timestamp": "2026-10-16T12:36:30.683Z",
   "status": "PASSED",
   "totalPassed": 7,
   "results": [
@@ -11,12 +11,12 @@
     {
       "title": "1.2 Courier settlement executes with exact COD, fee netting & journal entry",
       "status": "PASS",
-      "durationMs": 1
+      "durationMs": 0
     },
     {
       "title": "2.1 Mobile banking payment verifies with unique TrxID and credits wallet",
       "status": "PASS",
-      "durationMs": 0
+      "durationMs": 1
     },
     {
       "title": "2.2 Duplicate TrxID reuse is rejected fail-closed with structured error",
@@ -29,9 +29,9 @@
       "durationMs": 0
     },
     {
-      "title": "3.2 Disaster Recovery: Full state wipe & restoration matches byte-for-byte",
+      "title": "3.2 Local Recovery: Full storage wipe & state restoration verifies wallet and order recovery",
       "status": "PASS",
-      "durationMs": 1
+      "durationMs": 0
     },
     {
       "title": "4.1 Audit detects zero orphaned transactions and verifies ledger invariants",
