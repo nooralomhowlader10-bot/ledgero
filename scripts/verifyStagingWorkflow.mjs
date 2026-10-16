@@ -1,13 +1,16 @@
 /**
  * scripts/verifyStagingWorkflow.mjs
- * Ledgero Automated Staging Acceptance & Disaster Recovery Verification Suite
+ * Ledgero Automated Staging Acceptance & Local Recovery Verification Suite
  *
  * Validates operational and accounting workflows requested by the senior auditor:
  * 1. End-to-End Online Order Lifecycle: Creation -> Advance -> Pack -> Ship -> Deliver -> Courier Settlement
  * 2. Multi-Wallet Ledger Reconciliation: COD, Courier Expense, Net Wallet Credit, and Double-Entry Balanced Journal
  * 3. Mobile Banking (MFS) Payment Verification & Duplicate TrxID Prevention
- * 4. Full Snapshot Backup & Zero-Loss Recovery Simulation (Byte-for-byte state preservation)
+ * 4. State Engine Backup Export & Local Storage Recovery Simulation (Verifying key-level wallet balance and order restoration after local storage wipe)
  * 5. Historical Settlement Integrity & Orphan Transaction Audit
+ *
+ * NOTE: This suite tests local state engine storage restoration in Node.js mock storage.
+ * Live multi-collection Cloud Firestore Disaster Recovery must be validated separately in a live Firebase environment.
  *
  * Outputs auditable execution report to tests/artifacts/STAGING_ACCEPTANCE_REPORT.json
  */
@@ -59,7 +62,7 @@ if (!fs.existsSync(artifactsDir)) {
 }
 
 console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-console.log('🧪 LEDGERO STAGING ACCEPTANCE & DISASTER RECOVERY VERIFICATION');
+console.log('🧪 LEDGERO STAGING ACCEPTANCE & LOCAL RECOVERY SIMULATION');
 console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
 console.log(`Execution Timestamp: ${new Date().toISOString()}`);
 console.log(`Environment: Node.js ${process.version} (${process.platform}-${process.arch})`);
@@ -376,6 +379,7 @@ fs.writeFileSync(
   reportPath,
   JSON.stringify(
     {
+      suite: 'Staging State Engine Acceptance & Local Recovery Simulation',
       timestamp: new Date().toISOString(),
       status: 'PASSED',
       totalPassed: testResults.length,
@@ -387,4 +391,5 @@ fs.writeFileSync(
   'utf8'
 );
 console.log(`📄 Saved staging acceptance report to: tests/artifacts/STAGING_ACCEPTANCE_REPORT.json`);
-console.log('\n🎉 ALL STAGING ACCEPTANCE & DISASTER RECOVERY TESTS PASSED.');
+console.log('\n🎉 ALL STAGING ACCEPTANCE & LOCAL RECOVERY SIMULATION TESTS PASSED.');
+

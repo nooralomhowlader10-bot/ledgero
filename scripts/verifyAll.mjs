@@ -116,14 +116,18 @@ for (const r of results) {
 }
 log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
 
-const logFilePath = path.join(artifactsDir, 'FULL_VERIFICATION_LOG.txt');
-fs.writeFileSync(logFilePath, logChunks.join('\n') + '\n', 'utf8');
-log(`📄 Saved audit summary log to: tests/artifacts/FULL_VERIFICATION_LOG.txt`);
-
 if (allPassed) {
   log(`\n🎉 ALL ${gates.length} AUTOMATED VERIFICATION GATES PASSED. Review staging/pilot and operational checks separately before production launch.`);
+} else {
+  log('\n❌ ONE OR MORE CERTIFICATION GATES FAILED. Review logs above.');
+}
+
+const logFilePath = path.join(artifactsDir, 'FULL_VERIFICATION_LOG.txt');
+fs.writeFileSync(logFilePath, logChunks.join('\n') + '\n', 'utf8');
+console.log(`📄 Saved audit summary log to: tests/artifacts/FULL_VERIFICATION_LOG.txt`);
+
+if (allPassed) {
   process.exit(0);
 } else {
-  console.error('\n❌ ONE OR MORE CERTIFICATION GATES FAILED. Review logs above.');
   process.exit(1);
 }

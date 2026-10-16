@@ -10,18 +10,19 @@ All six automated certification gates have passed synchronously with **Exit Code
 
 | Gate | Name | Command | Tests | Status | Duration |
 |---|---|---|---|---|---|
-| **Gate 1** | Core Accounting & State Engine | `npm test` | 101/101 | **PASSED (Exit 0)** | 0.22s |
-| **Gate 2** | Embedded Rules-Contract Simulator | `npm run test:rules:embedded` | 25/25 | **PASSED (Exit 0)** | 0.28s |
-| **Gate 3** | Fresh Production Source Build | `npm run build` | Vite v6 compilation | **PASSED (Exit 0)** | 4.64s |
+| **Gate 1** | Core Accounting & State Engine | `npm test` | 101/101 | **PASSED (Exit 0)** | 0.23s |
+| **Gate 2** | Embedded Rules-Contract Simulator | `npm run test:rules:embedded` | 25/25 | **PASSED (Exit 0)** | 0.29s |
+| **Gate 3** | Fresh Production Source Build | `npm run build` | Vite v6 compilation | **PASSED (Exit 0)** | 4.89s |
 | **Gate 4** | Distribution Integrity Verifier | `npm run verify:dist` | HTML, 33 JS, 1 CSS | **PASSED (Exit 0)** | 0.04s |
-| **Gate 5** | Official Google Firestore Emulator | `npm run test:emulator` | 25/25 (Port 8080) | **PASSED (Exit 0)** | 6.69s |
-| **Gate 6** | Staging Acceptance & Disaster Recovery Suite | `npm run verify:staging` | 7 Invariants & Full DR | **PASSED (Exit 0)** | 0.02s |
+| **Gate 5** | Official Google Firestore Emulator | `npm run test:emulator` | 25/25 (Port 8080) | **PASSED (Exit 0)** | 6.80s |
+| **Gate 6** | Staging Acceptance & Local Recovery Suite | `npm run verify:staging` | 7 Invariant Tests | **PASSED (Exit 0)** | 0.05s |
 
 > **Audit Artifacts Generated:**
 > - Master Execution Log: [`tests/artifacts/FULL_VERIFICATION_LOG.txt`](tests/artifacts/FULL_VERIFICATION_LOG.txt)
 > - Embedded Rules Simulator Report: [`tests/artifacts/embedded-rules-report.json`](tests/artifacts/embedded-rules-report.json)
 > - Official Google Emulator Report: [`tests/artifacts/emulator-rules-report.json`](tests/artifacts/emulator-rules-report.json)
-> - Staging Acceptance & Disaster Recovery Report: [`tests/artifacts/STAGING_ACCEPTANCE_REPORT.json`](tests/artifacts/STAGING_ACCEPTANCE_REPORT.json)
+> - Staging Acceptance & Local Recovery Report: [`tests/artifacts/STAGING_ACCEPTANCE_REPORT.json`](tests/artifacts/STAGING_ACCEPTANCE_REPORT.json)
+
 
 
 ---
@@ -137,7 +138,7 @@ All 24 conditions are implemented and tested in `tests/runAllTests.mjs` (Suite 5
 npm ci
 npm run verify:all
 ```
-This runs all 5 gates sequentially and outputs the complete summary table.
+This runs all 6 gates sequentially and outputs the complete summary table.
 
 ### 2. Independent Gate Execution
 - **Core Tests:** `npm test` (Runs all 101 unit/integration tests).
@@ -145,6 +146,7 @@ This runs all 5 gates sequentially and outputs the complete summary table.
 - **Dist Check:** `npm run verify:dist` (Verifies HTML, JS bundles, and CSS).
 - **Embedded Rules Simulator:** `npm run test:rules:embedded` (25 tests in <0.3s without Java).
 - **Official Firestore Emulator:** `npm run test:emulator` (Requires Java 21+ and port 8080; executes official Google rules engine).
+- **Staging Acceptance Suite:** `npm run verify:staging` (7 invariant tests validating order lifecycle, courier settlement, and local recovery simulation).
 
 ### 3. Automated Zero-Cost GitHub Actions Run
 Push the repository to GitHub. The workflow in `.github/workflows/ledgero-verify.yml` installs Node 22, Java 21 Temurin, caches emulator binaries, and executes `npm run verify:all` automatically.
@@ -156,7 +158,7 @@ Push the repository to GitHub. The workflow in `.github/workflows/ledgero-verify
   - Zero external OS binary dependencies: requires neither `powershell`, `.NET`, `zip`, nor third-party npm packages.
   - Generates full POSIX-compliant Local and Central Directory headers with forward slashes (`/`), UTF-8 encoding flags, and standard Unix permissions (`0o755` for scripts/directories, `0o644` for files).
   - Includes automated post-compression central-directory byte scanner in `scripts/packZip.mjs` verifying `backslashCount === 0`.
-  - Tested on 201 archive entries: 0 backslashes, 100% POSIX format. All files extract correctly into their respective directory hierarchies on Linux, macOS, and Windows.
+  - Tested on 204 archive entries: 0 backslashes, 100% POSIX format. All files extract correctly into their respective directory hierarchies on Linux, macOS, and Windows.
 
 ### 12. Issue H: Strict Firebase CLI Version Pinning & Report File Separation
 - **Improvements Implemented:**
@@ -176,8 +178,8 @@ To transition from Release Candidate to formal **Staging Pilot** and **Productio
 - **Issue:** Previous CI link returned 404 for unauthenticated reviewer browsers because repository was private.
 - **Resolution:**
   - Repository visibility permanently set to **Public** (`https://github.com/nooralomhowlader10-bot/ledgero`).
-  - GitHub Actions Workflow Run: [`https://github.com/nooralomhowlader10-bot/ledgero/actions/runs/38895960336`](https://github.com/nooralomhowlader10-bot/ledgero/actions/runs/38895960336)
-  - Execution Result: **Completed (Success) ✅** across all steps without requiring login or permissions.
+  - GitHub Actions Workflow Run: [`https://github.com/nooralomhowlader10-bot/ledgero/actions/runs/38901792984`](https://github.com/nooralomhowlader10-bot/ledgero/actions/runs/38901792984)
+  - Execution Result: **Completed (Success) ✅** across all six gates and the standalone staging acceptance step on Ubuntu Linux.
 
 ### 2. Strict `npm ci` Enforcement Without Silent Fallback
 - **Issue:** Previous workflow had `npm ci --no-audit --no-fund || npm install --no-audit --no-fund` which allowed `npm install` fallback.
@@ -188,7 +190,7 @@ To transition from Release Candidate to formal **Staging Pilot** and **Productio
       run: npm ci --no-audit --no-fund
     ```
   - Linux `npm ci` cross-platform root cause resolved: Pinned `@emnapi/core@1.11.3` and `@emnapi/runtime@1.11.3` into `package-lock.json` so optional WASM bindings for Tailwind Oxide install cleanly on Ubuntu Linux.
-  - CI Run `38895960336` verified that `npm ci` passed cleanly on Ubuntu Linux with Exit Code 0.
+  - CI Run `38901792984` verified that `npm ci` passed cleanly on Ubuntu Linux with Exit Code 0.
 
 ### 3. Staging Acceptance & Disaster Recovery Verification Matrix
 - **Test Suite:** `scripts/verifyStagingWorkflow.mjs` (`npm run verify:staging`)
@@ -201,10 +203,11 @@ To transition from Release Candidate to formal **Staging Pilot** and **Productio
   2. **Mobile Banking Verification & TrxID Uniqueness:**
      - MFS order (bKash ৳1,200.00) verified with TrxID `BKM99887711`.
      - Duplicate TrxID reuse attempt rejected fail-closed with `duplicate_trx_id` error.
-  3. **Full Backup & Disaster Recovery Simulation:**
+  3. **State Engine Backup Export & Local Storage Recovery Simulation:**
      - Full snapshot exported via `exportAllData` and schema validated with `validateBackupPayload`.
-     - Complete database wipe executed.
-     - Full recovery executed via `importAllData` with 100% byte-for-byte balance and order state restoration.
+     - Local storage wipe executed in mock storage environment.
+     - Recovery executed via `importAllData` with key-level wallet balance (Cash, bKash) and order state parity.
+     - *Important Architectural Note:* This suite verifies local state engine storage restoration in mock storage. Live multi-collection Cloud Firestore database wipe and recovery must be validated separately in a live Firebase Staging environment before unrestricted production release.
   4. **Historical Settlement Invariant Audit:**
      - Automated scan verified 0 orphaned transactions and 0 unbalanced journal entries.
 
@@ -215,5 +218,6 @@ To transition from Release Candidate to formal **Staging Pilot** and **Productio
 - `node_modules` strictly excluded.
 - `.git` strictly excluded.
 - 100% of zip entry paths strictly use POSIX `/` forward slashes (0 Windows backslashes).
-- All 5 gates certified.
+- All 6 gates certified.
+
 

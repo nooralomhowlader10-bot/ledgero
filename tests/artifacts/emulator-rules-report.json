@@ -1,7 +1,7 @@
 {
   "suite": "Google Cloud Firestore Emulator Security Rules Suite",
   "emulatorHost": "127.0.0.1:8080",
-  "executedAt": "2026-10-16T12:36:30.052Z",
+  "executedAt": "2026-10-16T12:59:56.107Z",
   "totalTests": 25,
   "passed": 25,
   "failed": 0,
@@ -10,42 +10,42 @@
     {
       "name": "1. Unauthenticated client cannot access private owner store (/stores/{slug})",
       "status": "PASS",
-      "durationMs": 58
+      "durationMs": 57
     },
     {
       "name": "2. Unauthenticated client can read public store info (/stores/{slug}/public/info)",
       "status": "PASS",
-      "durationMs": 18
+      "durationMs": 10
     },
     {
       "name": "3. Unauthenticated client can read public store products (/stores/{slug}/products/{id})",
       "status": "PASS",
-      "durationMs": 6
+      "durationMs": 5
     },
     {
       "name": "4. Unauthenticated client is blocked from reading user data (/users/{userId})",
       "status": "PASS",
-      "durationMs": 6
+      "durationMs": 5
     },
     {
       "name": "5. Unauthenticated client is blocked from reading audit logs (/users/{userId}/businesses/{bizId}/auditLog)",
       "status": "PASS",
-      "durationMs": 7
+      "durationMs": 4
     },
     {
       "name": "6. Anonymous customer can place a valid draft order (/stores/{slug}/orders/{orderId})",
       "status": "PASS",
-      "durationMs": 61
+      "durationMs": 56
     },
     {
       "name": "7. Malicious order with status == \"delivered\" is rejected with permission-denied",
       "status": "PASS",
-      "durationMs": 21
+      "durationMs": 20
     },
     {
       "name": "8. Malicious order with injected unauthorized fields is rejected with permission-denied",
       "status": "PASS",
-      "durationMs": 13
+      "durationMs": 11
     },
     {
       "name": "9. Malicious order with negative totalAmount is rejected with permission-denied",
@@ -55,7 +55,7 @@
     {
       "name": "10. Order on nonexistent store path is rejected with permission-denied",
       "status": "PASS",
-      "durationMs": 19
+      "durationMs": 16
     },
     {
       "name": "11. Order with id mismatch (path id != document id) is rejected with permission-denied",
@@ -65,7 +65,7 @@
     {
       "name": "12. Order with 6 items where the 6th item is malformed is rejected with permission-denied",
       "status": "PASS",
-      "durationMs": 9
+      "durationMs": 11
     },
     {
       "name": "13. Order without subtotal field where totalAmount does not equal sum of item subtotals is rejected",
@@ -75,62 +75,62 @@
     {
       "name": "14. Updating an existing storefront order is rejected (allow update: if false;)",
       "status": "PASS",
-      "durationMs": 32
+      "durationMs": 35
     },
     {
       "name": "15. Authenticated stranger cannot read owner store (/stores/{slug}), owner can",
       "status": "PASS",
-      "durationMs": 55
+      "durationMs": 89
     },
     {
       "name": "16. Owner can read/write private ledger days, non-owner authenticated user is blocked with 403",
       "status": "PASS",
-      "durationMs": 30
+      "durationMs": 33
     },
     {
       "name": "17. Public product blocks private fields (buyPrice, profit, batches) and non-owner reads only public schema",
       "status": "PASS",
-      "durationMs": 26
+      "durationMs": 29
     },
     {
       "name": "18. Audit log is strictly append-only; cannot be updated or deleted even if meta/info is removed",
       "status": "PASS",
-      "durationMs": 44
+      "durationMs": 56
     },
     {
       "name": "19. Storefront Mobile Banking numbers (bkashNumber/nagadNumber) & customer order TrxID validation",
       "status": "PASS",
-      "durationMs": 51
+      "durationMs": 65
     },
     {
       "name": "20. Online Orders: Creation of pre-settled or pre-verified orders is strictly forbidden; draft/confirmed succeeds",
       "status": "PASS",
-      "durationMs": 43
+      "durationMs": 56
     },
     {
       "name": "21. Online Orders: State transition constraints prevent illegal status jumps",
       "status": "PASS",
-      "durationMs": 68
+      "durationMs": 81
     },
     {
       "name": "22. P0-1: Order settlement requires atomic day document write synchronization",
       "status": "PASS",
-      "durationMs": 99
+      "durationMs": 110
     },
     {
       "name": "23. P0-2: Payment verification forbids conflicting status and requires atomic trxRegistry claim",
       "status": "PASS",
-      "durationMs": 63
+      "durationMs": 66
     },
     {
       "name": "24. TrxID Registry: Entries are strictly append-only; updates and deletes are rejected (403)",
       "status": "PASS",
-      "durationMs": 17
+      "durationMs": 20
     },
     {
       "name": "25. Settled Orders: Financial fields are immutable and deletion is forbidden (403)",
       "status": "PASS",
-      "durationMs": 56
+      "durationMs": 63
     }
   ]
 }
