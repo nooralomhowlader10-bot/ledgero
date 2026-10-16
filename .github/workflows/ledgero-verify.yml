@@ -35,8 +35,8 @@ jobs:
           path: ~/.cache/firebase/emulators
           key: firebase-firestore-emulator-${{ runner.os }}-${{ hashFiles('firebase.json') }}-cli-15.33.0
 
-      - name: Install reproducible project dependencies
-        run: npm ci --no-audit --no-fund || npm install --no-audit --no-fund
+      - name: Install reproducible project dependencies (strict npm ci)
+        run: npm ci --no-audit --no-fund
 
       - name: Install pinned Firebase CLI
         run: npm install --global firebase-tools@15.33.0
