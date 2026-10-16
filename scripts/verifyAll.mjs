@@ -2,12 +2,13 @@
  * scripts/verifyAll.mjs
  * Master Quality & Production Verification Pipeline for Ledgero
  *
- * Runs all 5 mandatory certification gates sequentially:
+ * Runs all 6 mandatory certification gates sequentially:
  * 1. Core Accounting & Ledger Engine (npm test - 101 tests)
  * 2. Embedded Rules-Contract Simulator (npm run test:rules:embedded - 25 tests)
  * 3. Fresh Production Source Build (npm run build - Vite compilation)
  * 4. Distribution Integrity Check (npm run verify:dist)
  * 5. Official Google Cloud Firestore Emulator Suite (npm run test:emulator - 25 tests)
+ * 6. Staging Acceptance & Local Recovery Suite (npm run verify:staging - 7 tests)
  *
  * Generates an auditable execution summary and exits with code 0 only if ALL gates pass.
  */

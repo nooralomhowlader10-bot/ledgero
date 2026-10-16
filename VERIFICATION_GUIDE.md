@@ -89,7 +89,7 @@ npm test
   - **Suite 5.36 (P0 Hardening: Online Order State Transitions & Self-Healing):** Reversals, amount matching, stored wallet existence guards, and multi-case self-healing reconciliation.
   - **Suite 5.37 (P1 Hardening: Multi-Biz Historical TrxID & Strict Backup):** User-wide TrxID scoping, duplicate detection, and partial backup fail-closed rejection.
   - **Suite 5.38 (P1 Hardening: Autosave Zero-Write Dirty-Check & Conflict Protection):** Eliminates redundant cloud writes, protects against blind overwrites.
-  - **Suite 5.39 (P1 Hardening: End-to-End Disaster Recovery):** Full multi-biz cloud export $\to$ full cloud database wipe $\to$ 2-step restore $\to$ 100% invariant and data parity verified.
+  - **Suite 5.39 (P1 Hardening: End-to-End Disaster Recovery Simulation):** Full multi-biz export $\to$ local storage wipe simulation $\to$ 2-step restore $\to$ 100% invariant and data parity verified. (Live Firestore multi-collection DR drill tested in Firebase Staging environment).
 
 ---
 
@@ -155,3 +155,4 @@ npm run verify:dist
 | **Automated Tests** | `npm test` | ~2s | **101/101 (100%)** | Node.js (Pure ESM, no external services) |
 | **Embedded Rules Simulator** | `npm run test:rules:embedded` | < 1s | **25/25 (100%)** | Node.js (In-process HTTP server on port 18080) |
 | **Official Firestore Emulator** | `npm run test:emulator` | Variable | Live or Fail-Closed | Java JDK 21+, `firebase-tools`, port 8080 |
+| **Staging Acceptance & Local Recovery** | `npm run verify:staging` | < 1s | **7/7 (100%)** | Node.js (7 invariant tests) |
