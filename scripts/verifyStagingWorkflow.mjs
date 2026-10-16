@@ -17,6 +17,20 @@ import path from 'node:path';
 import assert from 'node:assert/strict';
 import { fileURLToPath } from 'node:url';
 
+// Universal mock for headless Node.js runtimes (Node 20, Node 22, etc.)
+if (typeof globalThis.localStorage === 'undefined' || typeof globalThis.localStorage?.setItem !== 'function') {
+  const store = new Map();
+  globalThis.localStorage = {
+    getItem: (key) => store.has(String(key)) ? store.get(String(key)) : null,
+    setItem: (key, val) => { store.set(String(key), String(val)); },
+    removeItem: (key) => { store.delete(String(key)); },
+    clear: () => { store.clear(); },
+    key: (i) => Array.from(store.keys())[i] || null,
+    get length() { return store.size; },
+  };
+}
+
+
 import {
   confirmOnlineOrderInState,
   packOnlineOrderInState,
