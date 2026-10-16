@@ -1,24 +1,28 @@
-▶️ GATE 1/5: Running Core Accounting & State Engine Tests (101 Tests)...
-   Status: [PASSED] | Exit Code: 0 | Duration: 0.41s
+▶️ GATE 1/6: Running Core Accounting & State Engine Tests (101 Tests)...
+   Status: [PASSED] | Exit Code: 0 | Duration: 0.21s
 
-▶️ GATE 2/5: Running Embedded Rules-Contract Simulator (25 Tests)...
-   Status: [PASSED] | Exit Code: 0 | Duration: 0.28s
+▶️ GATE 2/6: Running Embedded Rules-Contract Simulator (25 Tests)...
+   Status: [PASSED] | Exit Code: 0 | Duration: 0.27s
 
-▶️ GATE 3/5: Running Fresh Production Source Build (Vite v6)...
-   Status: [PASSED] | Exit Code: 0 | Duration: 10.35s
+▶️ GATE 3/6: Running Fresh Production Source Build (Vite v6)...
+   Status: [PASSED] | Exit Code: 0 | Duration: 8.08s
 
-▶️ GATE 4/5: Running Distribution Integrity Verifier (verify:dist)...
+▶️ GATE 4/6: Running Distribution Integrity Verifier (verify:dist)...
    Status: [PASSED] | Exit Code: 0 | Duration: 0.04s
 
-▶️ GATE 5/5: Running Official Google Cloud Firestore Emulator (Port 8080, 25 Tests)...
-   Status: [PASSED] | Exit Code: 0 | Duration: 9.23s
+▶️ GATE 5/6: Running Official Google Cloud Firestore Emulator (Port 8080, 25 Tests)...
+   Status: [PASSED] | Exit Code: 0 | Duration: 20.11s
+
+▶️ GATE 6/6: Running Staging Acceptance & Disaster Recovery Suite (7 Tests)...
+   Status: [PASSED] | Exit Code: 0 | Duration: 0.05s
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 📊 MASTER CERTIFICATION SUMMARY MATRIX
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-✅ Gate 1: Core Accounting & State Engine Tests (101 Tests)        Exit: 0 (0.41s)
-✅ Gate 2: Embedded Rules-Contract Simulator (25 Tests)            Exit: 0 (0.28s)
-✅ Gate 3: Fresh Production Source Build (Vite v6)                 Exit: 0 (10.35s)
+✅ Gate 1: Core Accounting & State Engine Tests (101 Tests)        Exit: 0 (0.21s)
+✅ Gate 2: Embedded Rules-Contract Simulator (25 Tests)            Exit: 0 (0.27s)
+✅ Gate 3: Fresh Production Source Build (Vite v6)                 Exit: 0 (8.08s)
 ✅ Gate 4: Distribution Integrity Verifier (verify:dist)           Exit: 0 (0.04s)
-✅ Gate 5: Official Google Cloud Firestore Emulator (Port 8080, 25 Tests) Exit: 0 (9.23s)
+✅ Gate 5: Official Google Cloud Firestore Emulator (Port 8080, 25 Tests) Exit: 0 (20.11s)
+✅ Gate 6: Staging Acceptance & Disaster Recovery Suite (7 Tests)  Exit: 0 (0.05s)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━

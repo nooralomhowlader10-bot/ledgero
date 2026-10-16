@@ -29,6 +29,7 @@ if (!fs.existsSync(artifactsDir)) {
 // Prevent artifacts from an older run being mistaken for evidence from this run.
 fs.rmSync(path.join(artifactsDir, 'emulator-rules-report.json'), { force: true });
 fs.rmSync(path.join(artifactsDir, 'embedded-rules-report.json'), { force: true });
+fs.rmSync(path.join(artifactsDir, 'STAGING_ACCEPTANCE_REPORT.json'), { force: true });
 
 const gates = [
   {
@@ -55,6 +56,11 @@ const gates = [
     name: 'Official Google Cloud Firestore Emulator (Port 8080, 25 Tests)',
     command: process.execPath,
     args: ['scripts/testWithOfficialEmulator.mjs'],
+  },
+  {
+    name: 'Staging Acceptance & Disaster Recovery Suite (7 Tests)',
+    command: process.execPath,
+    args: ['scripts/verifyStagingWorkflow.mjs'],
   },
 ];
 

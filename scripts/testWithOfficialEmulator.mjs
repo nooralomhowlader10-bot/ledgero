@@ -102,14 +102,14 @@ function pickCli() {
   if (fs.existsSync(localCli) && fs.existsSync(localPkgJson)) {
     try {
       const pkg = JSON.parse(fs.readFileSync(localPkgJson, 'utf8'));
-      if (pkg.version === PINNED_FIREBASE_VERSION || pkg.version.startsWith('15.33.')) {
+      if (pkg.version === PINNED_FIREBASE_VERSION) {
         return { command: process.execPath, prefixArgs: [localCli], source: `local node_modules (firebase-tools ${pkg.version})` };
       }
       console.warn(`⚠️ Notice: Local firebase-tools version ${pkg.version} does not match pinned ${PINNED_FIREBASE_VERSION}.`);
     } catch {}
   }
 
-  // Check global firebase CLI - strictly require pinned 15.33.x
+  // Check global firebase CLI - strictly require exact pinned 15.33.0
   const globalProbe = spawnSync('firebase', ['--version'], {
     cwd: projectRoot,
     encoding: 'utf8',
@@ -118,7 +118,7 @@ function pickCli() {
     shell: process.platform === 'win32',
   });
   const globalVersion = `${globalProbe.stdout || ''}${globalProbe.stderr || ''}`.trim().split(/\s+/)[0];
-  if (globalProbe.status === 0 && (globalVersion === PINNED_FIREBASE_VERSION || globalVersion.startsWith('15.33.'))) {
+  if (globalProbe.status === 0 && globalVersion === PINNED_FIREBASE_VERSION) {
     return { command: 'firebase', prefixArgs: [], source: `global firebase-tools ${globalVersion}` };
   }
   if (globalProbe.status === 0 && globalVersion) {

@@ -41,11 +41,14 @@ jobs:
       - name: Install pinned Firebase CLI
         run: npm install --global firebase-tools@15.33.0
 
-      - name: Run all five verification gates
+      - name: Run all certification gates
         env:
           CI: 'true'
           LEDGERO_EMULATOR_TIMEOUT_MS: '600000'
         run: npm run verify:all
+
+      - name: Run staging acceptance & disaster recovery suite
+        run: npm run verify:staging
 
       - name: Upload verification artifacts
         if: always()

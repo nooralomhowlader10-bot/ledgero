@@ -6,7 +6,7 @@ This document serves as the authoritative, reproducible resolution guide for the
 
 ## 🌟 Executive Certification Summary
 
-All five automated certification gates have passed synchronously with **Exit Code 0** on a clean execution pass:
+All six automated certification gates have passed synchronously with **Exit Code 0** on a clean execution pass:
 
 | Gate | Name | Command | Tests | Status | Duration |
 |---|---|---|---|---|---|
@@ -15,11 +15,14 @@ All five automated certification gates have passed synchronously with **Exit Cod
 | **Gate 3** | Fresh Production Source Build | `npm run build` | Vite v6 compilation | **PASSED (Exit 0)** | 4.64s |
 | **Gate 4** | Distribution Integrity Verifier | `npm run verify:dist` | HTML, 33 JS, 1 CSS | **PASSED (Exit 0)** | 0.04s |
 | **Gate 5** | Official Google Firestore Emulator | `npm run test:emulator` | 25/25 (Port 8080) | **PASSED (Exit 0)** | 6.69s |
+| **Gate 6** | Staging Acceptance & Disaster Recovery Suite | `npm run verify:staging` | 7 Invariants & Full DR | **PASSED (Exit 0)** | 0.02s |
 
 > **Audit Artifacts Generated:**
 > - Master Execution Log: [`tests/artifacts/FULL_VERIFICATION_LOG.txt`](tests/artifacts/FULL_VERIFICATION_LOG.txt)
 > - Embedded Rules Simulator Report: [`tests/artifacts/embedded-rules-report.json`](tests/artifacts/embedded-rules-report.json)
 > - Official Google Emulator Report: [`tests/artifacts/emulator-rules-report.json`](tests/artifacts/emulator-rules-report.json)
+> - Staging Acceptance & Disaster Recovery Report: [`tests/artifacts/STAGING_ACCEPTANCE_REPORT.json`](tests/artifacts/STAGING_ACCEPTANCE_REPORT.json)
+
 
 ---
 
@@ -157,7 +160,7 @@ Push the repository to GitHub. The workflow in `.github/workflows/ledgero-verify
 
 ### 12. Issue H: Strict Firebase CLI Version Pinning & Report File Separation
 - **Improvements Implemented:**
-  1. **Strict Firebase CLI Version Pinning:** In `scripts/testWithOfficialEmulator.mjs`, version validation is now enforced across all three discovery tiers: local `node_modules`, global `firebase` CLI, and npx fallback must strictly match pinned `15.33.x`. Any unpinned global or local versions (e.g. 13.x, 14.x, or 16.x) are bypassed in favor of `pinned npx firebase-tools@15.33.0`, matching CI (`.github/workflows/ledgero-verify.yml`) exactly to guarantee identical behavior across all machines.
+  1. **Strict Firebase CLI Version Pinning:** In `scripts/testWithOfficialEmulator.mjs`, version validation is now enforced across all three discovery tiers: local `node_modules`, global `firebase` CLI, and npx fallback must strictly match pinned `15.33.0` exactly (`=== PINNED_FIREBASE_VERSION`). Any unpinned or minor-wildcard versions are bypassed in favor of `pinned npx firebase-tools@15.33.0`, matching CI (`.github/workflows/ledgero-verify.yml`) exactly to guarantee identical behavior across all machines.
   2. **Dedicated Verification Artifact Names:** Previously both the embedded rules simulator (Gate 2) and the official Firestore emulator (Gate 5) wrote to `emulator-rules-report.json`. The runner now writes:
      - Embedded Simulator: [`tests/artifacts/embedded-rules-report.json`](tests/artifacts/embedded-rules-report.json)
      - Official Google Emulator: [`tests/artifacts/emulator-rules-report.json`](tests/artifacts/emulator-rules-report.json)
