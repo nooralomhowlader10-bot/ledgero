@@ -89,7 +89,7 @@ npm test
   - **Suite 5.36 (P0 Hardening: Online Order State Transitions & Self-Healing):** Reversals, amount matching, stored wallet existence guards, and multi-case self-healing reconciliation.
   - **Suite 5.37 (P1 Hardening: Multi-Biz Historical TrxID & Strict Backup):** User-wide TrxID scoping, duplicate detection, and partial backup fail-closed rejection.
   - **Suite 5.38 (P1 Hardening: Autosave Zero-Write Dirty-Check & Conflict Protection):** Eliminates redundant cloud writes, protects against blind overwrites.
-  - **Suite 5.39 (P1 Hardening: End-to-End Disaster Recovery Simulation):** Full multi-biz export $\to$ local storage wipe simulation $\to$ 2-step restore $\to$ 100% invariant and data parity verified. (Live Firestore multi-collection DR drill tested in Firebase Staging environment).
+  - **Suite 5.39 (P1 Hardening: End-to-End Disaster Recovery Simulation):** Full multi-biz export $\to$ local storage wipe simulation $\to$ 2-step restore; selected invariants and key-level data parity are verified in mock/local storage. **Scope limitation:** this is not a live Cloud Firestore disaster-recovery drill. A live multi-collection Firestore backup/wipe/restore drill in a dedicated Firebase Staging project remains a separate prerequisite before unrestricted production release.
 
 ---
 
