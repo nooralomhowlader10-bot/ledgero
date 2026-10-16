@@ -178,7 +178,7 @@ To transition from Release Candidate to formal **Staging Pilot** and **Productio
 - **Issue:** Previous CI link returned 404 for unauthenticated reviewer browsers because repository was private.
 - **Resolution:**
   - Repository visibility permanently set to **Public** (`https://github.com/nooralomhowlader10-bot/ledgero`).
-  - GitHub Actions Workflow Run: [`https://github.com/nooralomhowlader10-bot/ledgero/actions/runs/38901792984`](https://github.com/nooralomhowlader10-bot/ledgero/actions/runs/38901792984)
+  - GitHub Actions Workflow Run: [`https://github.com/nooralomhowlader10-bot/ledgero/actions/runs/38904648198`](https://github.com/nooralomhowlader10-bot/ledgero/actions/runs/38904648198) (Commit `464f1ae`)
   - Execution Result: **Completed (Success) ✅** across all six gates and the standalone staging acceptance step on Ubuntu Linux.
 
 ### 2. Strict `npm ci` Enforcement Without Silent Fallback
@@ -190,7 +190,7 @@ To transition from Release Candidate to formal **Staging Pilot** and **Productio
       run: npm ci --no-audit --no-fund
     ```
   - Linux `npm ci` cross-platform root cause resolved: Pinned `@emnapi/core@1.11.3` and `@emnapi/runtime@1.11.3` into `package-lock.json` so optional WASM bindings for Tailwind Oxide install cleanly on Ubuntu Linux.
-  - CI Run `38901792984` verified that `npm ci` passed cleanly on Ubuntu Linux with Exit Code 0.
+  - CI Run `38904648198` verified that `npm ci` passed cleanly on Ubuntu Linux with Exit Code 0.
 
 ### 3. Staging Acceptance & Disaster Recovery Verification Matrix
 - **Test Suite:** `scripts/verifyStagingWorkflow.mjs` (`npm run verify:staging`)
